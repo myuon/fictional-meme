@@ -4,9 +4,10 @@
   "description": "",
   "main": "app/main.js",
   "scripts": {
+    "predev": "rimraf dist",
     "dev": "run-p dev:*",
     "dev:webpack": "yarn build:dev:webpack --watch",
-    "dev:electron": "electron-forge start",
+    "dev:electron": "wait-on ./dist/index.html && cross-env NODE_ENV=development electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "build:dev:webpack": "cross-env NODE_ENV=development webpack",
@@ -53,7 +54,9 @@
     "html-webpack-plugin": "^5.5.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.6.2",
+    "rimraf": "^3.0.2",
     "typescript": "^4.6.4",
+    "wait-on": "^6.0.1",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2"
   },

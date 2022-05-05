@@ -12,6 +12,12 @@ const createWindow = () => {
   });
 
   mainWindow.loadFile("dist/index.html");
+
+  if (isDev) {
+    mainWindow.webContents.openDevTools({
+      mode: "detach",
+    });
+  }
 };
 
 if (isDev) {
