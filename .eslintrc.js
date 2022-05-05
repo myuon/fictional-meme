@@ -18,8 +18,9 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["react", "@typescript-eslint"],
+  plugins: ["react", "@typescript-eslint", "css-reorder"],
   rules: {
+    "css-reorder/property-reorder": "error",
     "react/self-closing-comp": "error",
   },
 };
