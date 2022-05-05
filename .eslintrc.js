@@ -19,4 +19,7 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["react", "@typescript-eslint"],
+  rules: {
+    "react/self-closing-comp": "error",
+  },
 };
