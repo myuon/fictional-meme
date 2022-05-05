@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
+const isDev = process.env.NODE_ENV !== "production";
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -10,8 +11,14 @@ const createWindow = () => {
     },
   });
 
-  mainWindow.loadFile("index.html");
+  mainWindow.loadFile("dist/index.html");
 };
+
+if (isDev) {
+  require("electron-reload")(path.join(__dirname, ".."), {
+    electron: path.join(__dirname, "../node_modules/.bin/electron"),
+  });
+}
 
 app.whenReady().then(() => {
   createWindow();
