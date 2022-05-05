@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, shell } = require("electron");
 const path = require("path");
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -12,6 +12,10 @@ const createWindow = () => {
   });
 
   mainWindow.loadFile("dist/index.html");
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: "deny" };
+  });
 
   if (isDev) {
     mainWindow.webContents.openDevTools({

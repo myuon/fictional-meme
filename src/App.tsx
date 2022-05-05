@@ -16,7 +16,14 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         styles={[
           css`
             html {
+              font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+                "Hiragino Sans", Meiryo, sans-serif;
               -webkit-font-smoothing: antialiased;
+            }
+
+            a {
+              color: inherit;
+              text-decoration: none;
             }
           `,
           {
@@ -25,6 +32,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
             h3: theme.typography.h3,
             h4: theme.typography.h4,
             p: theme.typography.body,
+            small: theme.typography.caption,
           },
         ]}
       />
