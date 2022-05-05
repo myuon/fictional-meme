@@ -1,0 +1,8 @@
+node_modules/
+dist/
+out/
+.eslintrc.js
+webpack.config.js
+
+# for now
+app/*.js

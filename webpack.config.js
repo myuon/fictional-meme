@@ -7,7 +7,7 @@ const webpack = require("webpack");
 module.exports = {
   mode: isDev ? "development" : "production",
   target: "web",
-  entry: "./src/index.ts",
+  entry: "./src/index.tsx",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "index.js",
