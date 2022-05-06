@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { SWRConfig } from "swr";
 import IndexPage from "./pages/Index";
 import "ress";
@@ -16,8 +16,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         styles={[
           css`
             html {
-              font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
-                "Hiragino Sans", Meiryo, sans-serif;
+              font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
               -webkit-font-smoothing: antialiased;
             }
 

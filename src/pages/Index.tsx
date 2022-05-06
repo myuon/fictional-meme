@@ -1,21 +1,24 @@
 import { css } from "@emotion/react";
 import * as React from "react";
-import { useIssues } from "../api/issue";
 import { useAuthUser } from "../api/user";
 import { theme } from "../components/theme";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import * as dayjs from "dayjs";
 import MergeTypeIcon from "@mui/icons-material/MergeType";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import { Loading } from "../components/Loading";
+import { useInvolvedIssues } from "../api/issues";
 
 export const IndexPage = () => {
   const { data: user } = useAuthUser();
-  const { data: issues } = useIssues();
+  const { data: issues } = useInvolvedIssues();
 
   return (
     <div
       css={css`
         main {
+          display: grid;
+          grid-template-rows: auto 1fr;
           max-width: 1024px;
           margin: 32px auto;
         }
@@ -53,13 +56,14 @@ export const IndexPage = () => {
       </header>
 
       <main>
+        {!issues && <Loading />}
         <div
           css={css`
             display: grid;
             gap: 16px;
           `}
         >
-          {issues?.map((issue) => (
+          {issues?.search.nodes?.map((issue) => (
             <div
               key={issue.id}
               css={css`
@@ -68,7 +72,7 @@ export const IndexPage = () => {
               `}
             >
               <a
-                href={issue.html_url}
+                href={issue.url}
                 target="_blank"
                 css={css`
                   display: flex;
@@ -78,7 +82,7 @@ export const IndexPage = () => {
                 `}
                 rel="noreferrer"
               >
-                {issue.pull_request ? (
+                {true ? (
                   <MergeTypeIcon
                     css={css`
                       color: ${theme.palette.semantical.open.main};
@@ -102,9 +106,9 @@ export const IndexPage = () => {
                   }
                 `}
               >
-                <span>{issue.repository?.full_name}</span>
+                <span>{issue.repository?.nameWithOwner}</span>
                 <span>
-                  {dayjs(issue.updated_at).format("YYYY-MM-DD")} updated
+                  {dayjs(issue.updatedAt).format("YYYY-MM-DD")} updated
                 </span>
               </small>
             </div>

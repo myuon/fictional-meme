@@ -4,3 +4,4 @@ out/
 yarn-error.log
 secrets/*
 !secrets/.gitkeep
+generated/
