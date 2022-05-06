@@ -64,56 +64,63 @@ export const IndexPage = () => {
             gap: 16px;
           `}
         >
-          {issues?.search.nodes?.map((issue) => (
-            <div
-              key={issue.id}
-              css={css`
-                display: grid;
-                gap: 8px;
-              `}
-            >
-              <a
-                href={issue.url}
-                target="_blank"
+          {issues?.search.nodes?.map((issue) =>
+            issue?.__typename === "PullRequest" ? (
+              <div
+                key={issue.id}
                 css={css`
-                  display: flex;
-                  gap: 6px;
-                  align-items: center;
-                  font-weight: 600;
+                  display: grid;
+                  gap: 8px;
                 `}
-                rel="noreferrer"
               >
-                {true ? (
+                <a
+                  href={issue.url}
+                  target="_blank"
+                  css={css`
+                    display: flex;
+                    gap: 6px;
+                    align-items: center;
+                    font-weight: 600;
+                  `}
+                  rel="noreferrer"
+                >
                   <MergeTypeIcon
+                    data-closed={issue.closed}
                     css={css`
-                      color: ${theme.palette.semantical.open.main};
-                    `}
-                  />
-                ) : (
-                  <ErrorOutlineIcon
-                    css={css`
-                      color: ${theme.palette.semantical.open.main};
-                    `}
-                  />
-                )}
-                {issue.title}
-              </a>
-              <small
-                css={css`
-                  color: ${theme.palette.gray[600]};
+                      &[data-closed="true"] {
+                        color: ${theme.palette.semantical.closed.main};
+                      }
 
-                  & > span:not(:last-of-type)::after {
-                    content: "・";
-                  }
+                      &[data-closed="false"] {
+                        color: ${theme.palette.semantical.open.main};
+                      }
+                    `}
+                  />
+                  {issue.title}
+                </a>
+                <small
+                  css={css`
+                    color: ${theme.palette.gray[600]};
+
+                    & > span:not(:last-of-type)::after {
+                      content: "・";
+                    }
+                  `}
+                >
+                  <span>{issue.repository?.nameWithOwner}</span>
+                  <span>
+                    {dayjs(issue.updatedAt).format("YYYY-MM-DD")} updated
+                  </span>
+                </small>
+              </div>
+            ) : issue?.__typename === "Issue" ? (
+              <ErrorOutlineIcon
+                css={css`
+                  color: ${theme.palette.semantical.open.main};
                 `}
-              >
-                <span>{issue.repository?.nameWithOwner}</span>
-                <span>
-                  {dayjs(issue.updatedAt).format("YYYY-MM-DD")} updated
-                </span>
-              </small>
-            </div>
-          ))}
+              />
+            ) : null
+          )}
         </div>
       </main>
     </div>

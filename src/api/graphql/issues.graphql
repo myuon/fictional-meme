@@ -1,0 +1,32 @@
+query searchIssues($last: Int!, $type: SearchType!, $q: String!) {
+  search(last: $last, type: $type, query: $q) {
+    nodes {
+      __typename
+      ... on PullRequest {
+        id
+        title
+        closed
+        state
+        isDraft
+        url
+        updatedAt
+        headRef {
+          name
+          target {
+            ... on Commit {
+              id
+              status {
+                state
+                id
+              }
+            }
+            abbreviatedOid
+          }
+        }
+        repository {
+          nameWithOwner
+        }
+      }
+    }
+  }
+}
