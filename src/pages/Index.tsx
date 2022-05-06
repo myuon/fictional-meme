@@ -1,9 +1,9 @@
 import { css } from "@emotion/react";
-import * as React from "react";
+import React from "react";
 import { useAuthUser } from "../api/user";
 import { theme } from "../components/theme";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import MergeTypeIcon from "@mui/icons-material/MergeType";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { Loading } from "../components/Loading";
@@ -108,9 +108,7 @@ export const IndexPage = () => {
                   `}
                 >
                   <span>{issue.repository?.nameWithOwner}</span>
-                  <span>
-                    {dayjs(issue.updatedAt).format("YYYY-MM-DD")} updated
-                  </span>
+                  <span>{dayjs(issue.updatedAt).fromNow()} updated</span>
                 </small>
               </div>
             ) : issue?.__typename === "Issue" ? (

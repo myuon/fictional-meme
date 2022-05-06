@@ -4,6 +4,10 @@ import IndexPage from "./pages/Index";
 import "ress";
 import { css, Global } from "@emotion/react";
 import { theme } from "./components/theme";
+import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "dayjs";
+
+dayjs.extend(relativeTime);
 
 const Pages = () => {
   return <IndexPage />;
