@@ -20,6 +20,7 @@ export const IndexPage = () => {
           display: grid;
           grid-template-rows: auto 1fr;
           max-width: 1024px;
+          padding: 16px;
           margin: 32px auto;
         }
       `}
