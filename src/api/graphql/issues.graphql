@@ -10,16 +10,20 @@ query searchIssues($last: Int!, $type: SearchType!, $q: String!) {
         url
         updatedAt
         headRef {
-          name
           target {
             ... on Commit {
-              id
+              __typename
               status {
                 state
-                id
               }
             }
             abbreviatedOid
+          }
+        }
+        mergeCommit {
+          abbreviatedOid
+          statusCheckRollup {
+            state
           }
         }
         repository {

@@ -44,6 +44,15 @@ export const theme = {
       draft: {
         main: "#9aa1ad",
       },
+      success: {
+        main: "#16a34a",
+      },
+      error: {
+        main: "#dc2626",
+      },
+      warning: {
+        main: "#f59e0b",
+      },
     },
     gray: {
       50: "#f9fafb",

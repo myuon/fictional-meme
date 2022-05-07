@@ -6,7 +6,10 @@ import {
 } from "../generated/graphql";
 import { graphqlWithAuth } from "./octokit";
 
-export const useInvolvedIssues = (name?: string) => {
+export const useInvolvedIssues = (
+  name: string | undefined,
+  refreshIntervalSeconds: number
+) => {
   return useSWR<SearchIssuesQuery>(
     name ? ["issues.involvedIssues", name] : null,
     async () =>
@@ -19,6 +22,9 @@ export const useInvolvedIssues = (name?: string) => {
         })
           .map(([key, value]) => `${key}:${value}`)
           .join(" "),
-      } as SearchIssuesQueryVariables)
+      } as SearchIssuesQueryVariables),
+    {
+      refreshInterval: refreshIntervalSeconds * 1000,
+    }
   );
 };
