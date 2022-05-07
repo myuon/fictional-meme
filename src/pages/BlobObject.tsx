@@ -1,13 +1,22 @@
 import { useParams } from "react-router-dom";
 import { Page } from "../components/Page";
 import { assertIsDefined } from "../helper/assert";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useBlob } from "../api/blob";
 import { LinkButton } from "../components/Button";
 import { css } from "@emotion/react";
 import { theme } from "../components/theme";
+import hljs from "highlight.js";
+import "highlight.js/styles/github.css";
 
 const FileViewer = ({ text }: { text: string }) => {
+  const ref = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (ref.current) {
+      hljs.highlightElement(ref.current);
+    }
+  }, []);
+
   return (
     <div
       css={css`
@@ -32,8 +41,19 @@ const FileViewer = ({ text }: { text: string }) => {
         )}
       </div>
       <div>
-        <pre>
-          <code>{text}</code>
+        <pre
+          css={css`
+            overflow: auto;
+          `}
+        >
+          <code
+            ref={ref}
+            css={css`
+              padding: 0 !important;
+            `}
+          >
+            {text}
+          </code>
         </pre>
       </div>
     </div>
@@ -55,14 +75,7 @@ export const BlobObjectPage = () => {
             <LinkButton>{data.node.abbreviatedOid}</LinkButton>
           </p>
 
-          <div
-            css={css`
-              width: 100%;
-              overflow-x: scroll;
-            `}
-          >
-            <FileViewer text={data.node.text ?? ""} />
-          </div>
+          <FileViewer text={data.node.text ?? ""} />
         </div>
       ) : null}
     </Page>
