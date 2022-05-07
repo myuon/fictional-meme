@@ -39,7 +39,6 @@ export const RepositoryPage = () => {
 
   const defaultBranchName = data?.repository?.defaultBranchRef?.name;
   const target = data?.repository?.defaultBranchRef?.target;
-  console.log(data);
 
   return (
     <Page>
@@ -83,8 +82,13 @@ export const RepositoryPage = () => {
                   (entry) => entry.name,
                 ])
                 ?.map((obj) => (
-                  <div
-                    key={obj.name}
+                  <Link
+                    to={
+                      obj.type === "blob"
+                        ? `/object/blob/${obj.object?.id}`
+                        : `#`
+                    }
+                    key={obj.oid}
                     css={css`
                       display: grid;
                       grid-template-columns: auto 1fr;
@@ -96,7 +100,7 @@ export const RepositoryPage = () => {
                       type={obj.type === "blob" ? "file" : "directory"}
                     />
                     <code>{obj.name}</code>
-                  </div>
+                  </Link>
                 ))
             : null}
         </div>

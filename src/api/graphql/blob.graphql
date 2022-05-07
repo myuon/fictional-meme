@@ -1,0 +1,15 @@
+query getBlob($id: ID!) {
+  node(id: $id) {
+    id
+    ... on Blob {
+      __typename
+      id
+      text
+      abbreviatedOid
+      byteSize
+      commitUrl
+      isBinary
+      isTruncated
+    }
+  }
+}

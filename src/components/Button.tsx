@@ -39,7 +39,7 @@ const styles = {
   },
 };
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   rounded?: boolean;
   color?: "primary" | "default";
 }
@@ -48,7 +48,7 @@ export const Button = ({
   rounded,
   color = "default",
   ...props
-}: ButtonProps & React.ComponentPropsWithoutRef<"button">) => {
+}: ButtonProps) => {
   return (
     <button
       {...props}
@@ -59,5 +59,26 @@ export const Button = ({
         rounded && styles.rounded,
       ]}
     />
+  );
+};
+
+export const LinkButton = ({ children, ...props }: ButtonProps) => {
+  return (
+    <button
+      {...props}
+      css={[
+        theme.typography.body,
+        css`
+          display: inline-block;
+          color: ${theme.palette.text.light};
+          text-decoration: underline;
+          &:hover {
+            text-decoration: none;
+          }
+        `,
+      ]}
+    >
+      {children}
+    </button>
   );
 };

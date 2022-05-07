@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ComponentsPage } from "./pages/Components";
 import { RepositoryPage } from "./pages/Repository";
+import { BlobObjectPage } from "./pages/BlobObject";
 
 dayjs.extend(relativeTime);
 
@@ -17,6 +18,7 @@ const Pages = () => {
     <Routes>
       <Route path="/" element={<IndexPage />} />
       <Route path="/repo/:owner/:name" element={<RepositoryPage />} />
+      <Route path="/object/blob/:id" element={<BlobObjectPage />} />
       <Route path="/components" element={<ComponentsPage />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

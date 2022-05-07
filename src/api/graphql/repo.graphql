@@ -10,6 +10,10 @@ query getRepository($owner: String!, $name: String!) {
             entries {
               name
               type
+              oid
+              object {
+                id
+              }
             }
           }
         }
