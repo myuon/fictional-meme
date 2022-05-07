@@ -88,6 +88,7 @@ export const RepositoryPage = () => {
                         ? `/object/blob/${obj.object?.id}`
                         : `#`
                     }
+                    state={{ fileName: obj.name }}
                     key={obj.oid}
                     css={css`
                       display: grid;

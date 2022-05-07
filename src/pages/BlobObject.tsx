@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { Page } from "../components/Page";
 import { assertIsDefined } from "../helper/assert";
 import { useBlob } from "../api/blob";
@@ -6,10 +6,33 @@ import { LinkButton } from "../components/Button";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { xcode } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import React from "react";
+import { css } from "@emotion/react";
 
-const FileViewer = ({ text }: { text?: string }) => {
+const detectLanguageFromFileName = (fileName: string) => {
+  if (fileName.endsWith(".ts")) {
+    return "typescript";
+  } else if (fileName.endsWith(".js")) {
+    return "javascript";
+  } else if (fileName.endsWith(".json")) {
+    return "json";
+  } else {
+    return undefined;
+  }
+};
+
+const FileViewer = ({
+  fileName,
+  text,
+}: {
+  fileName?: string;
+  text?: string;
+}) => {
   return text ? (
-    <SyntaxHighlighter style={xcode} language="json" showLineNumbers>
+    <SyntaxHighlighter
+      style={xcode}
+      language={fileName ? detectLanguageFromFileName(fileName) : undefined}
+      showLineNumbers
+    >
       {text}
     </SyntaxHighlighter>
   ) : null;
@@ -19,6 +42,9 @@ export const BlobObjectPage = () => {
   const { id } = useParams<{ id: string }>();
   assertIsDefined(id);
 
+  const location = useLocation();
+  const state = location.state as { fileName: string } | undefined;
+
   const { data } = useBlob(id);
 
   return (
@@ -26,11 +52,21 @@ export const BlobObjectPage = () => {
       {data?.node?.__typename === "Blob" ? (
         <div>
           <p>
-            <span>{data.node.byteSize}B</span>・
+            <span
+              css={css`
+                font-weight: bold;
+              `}
+            >
+              {state?.fileName}
+            </span>
+            ・<span>{data.node.byteSize}B</span>・
             <LinkButton>{data.node.abbreviatedOid}</LinkButton>
           </p>
 
-          <FileViewer text={data.node.text ?? undefined} />
+          <FileViewer
+            fileName={state?.fileName}
+            text={data.node.text ?? undefined}
+          />
         </div>
       ) : null}
     </Page>
