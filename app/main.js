@@ -4,7 +4,7 @@ const isDev = process.env.NODE_ENV !== "production";
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    width: 1200,
+    width: 550,
     height: 800,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),

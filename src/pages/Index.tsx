@@ -6,6 +6,8 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import { Loading } from "../components/Loading";
 import { useInvolvedIssues } from "../api/issues";
 import { IssueItem } from "./Index/IssueItem";
+import { Link } from "react-router-dom";
+import DeveloperModeIcon from "@mui/icons-material/DeveloperMode";
 
 const fromStatusState = (
   state: "EXPECTED" | "ERROR" | "FAILURE" | "PENDING" | "SUCCESS" | undefined
@@ -64,7 +66,17 @@ export const IndexPage = () => {
           />
           Gimlet
         </h1>
-        <p>Hi, {user?.viewer.name}!</p>
+        <div
+          css={css`
+            display: flex;
+            gap: 8px;
+          `}
+        >
+          <p>Hi, {user?.viewer.name}!</p>
+          <Link to="/components">
+            <DeveloperModeIcon />
+          </Link>
+        </div>
       </header>
 
       <main>

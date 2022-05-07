@@ -83,7 +83,7 @@ export const IssueItem = ({
       </a>
       <small
         css={css`
-          color: ${theme.palette.gray[600]};
+          color: ${theme.palette.text.light};
 
           & > span:not(:last-of-type)::after {
             content: "・";

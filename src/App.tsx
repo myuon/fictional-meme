@@ -6,11 +6,19 @@ import { css, Global } from "@emotion/react";
 import { theme } from "./components/theme";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
+import { ComponentsPage } from "./pages/Components";
 
 dayjs.extend(relativeTime);
 
 const Pages = () => {
-  return <IndexPage />;
+  return (
+    <Routes>
+      <Route path="/" element={<IndexPage />} />
+      <Route path="/components" element={<ComponentsPage />} />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
 };
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
@@ -21,6 +29,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
           css`
             html {
               font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+              color: ${theme.palette.text.main};
               -webkit-font-smoothing: antialiased;
             }
 
@@ -39,7 +48,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
           },
         ]}
       />
-      {children}
+      <HashRouter>{children}</HashRouter>
     </SWRConfig>
   );
 };
