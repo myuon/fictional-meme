@@ -7,6 +7,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import PendingIcon from "@mui/icons-material/Pending";
+import { Link } from "react-router-dom";
 
 const iconStyle = css`
   &[data-status="closed"] {
@@ -94,7 +95,9 @@ export const IssueItem = ({
         `}
       >
         <span key="repositoryName">
-          {repository.owner}/{repository.name}
+          <Link to={`/repo/${repository.owner}/${repository.name}`}>
+            {repository.owner}/{repository.name}
+          </Link>
         </span>
         <span key="updatedAt">{dayjs(updatedAt).fromNow()}</span>
         {commit ? (

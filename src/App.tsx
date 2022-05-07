@@ -8,6 +8,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ComponentsPage } from "./pages/Components";
+import { RepositoryPage } from "./pages/Repository";
 
 dayjs.extend(relativeTime);
 
@@ -15,6 +16,7 @@ const Pages = () => {
   return (
     <Routes>
       <Route path="/" element={<IndexPage />} />
+      <Route path="/repo/:owner/:name" element={<RepositoryPage />} />
       <Route path="/components" element={<ComponentsPage />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
