@@ -47,6 +47,7 @@ export const IssueItem = ({
           gap: 6px;
           align-items: center;
           font-weight: 600;
+          line-height: 1.3;
         `}
         rel="noreferrer"
       >

@@ -9,7 +9,7 @@ import { IssueItem } from "./Index/IssueItem";
 
 export const IndexPage = () => {
   const { data: user } = useAuthUser();
-  const { data: issues } = useInvolvedIssues();
+  const { data: issues } = useInvolvedIssues(user?.login);
 
   return (
     <div
@@ -18,7 +18,8 @@ export const IndexPage = () => {
           display: grid;
           grid-template-rows: auto 1fr;
           max-width: 1024px;
-          padding: 16px;
+          padding-right: 32px;
+          padding-left: 16px;
           margin: 32px auto;
         }
       `}
@@ -65,6 +66,7 @@ export const IndexPage = () => {
           {issues?.search.nodes?.map((issue) =>
             issue?.__typename === "PullRequest" ? (
               <IssueItem
+                key={issue.id}
                 variant="pr"
                 state={
                   issue.closed ? "closed" : issue.isDraft ? "draft" : "open"
@@ -74,6 +76,7 @@ export const IndexPage = () => {
               />
             ) : issue?.__typename === "Issue" ? (
               <IssueItem
+                key={issue.id}
                 variant="issue"
                 state={issue.closed ? "closed" : "open"}
                 repositoryName={issue.repository.nameWithOwner}

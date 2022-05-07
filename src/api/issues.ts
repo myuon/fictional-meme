@@ -6,14 +6,19 @@ import {
 } from "../generated/graphql";
 import { graphqlWithAuth } from "./octokit";
 
-export const useInvolvedIssues = () => {
+export const useInvolvedIssues = (name?: string) => {
   return useSWR<SearchIssuesQuery>(
-    "issues.involvedIssues",
+    name ? ["issues.involvedIssues", name] : null,
     async () =>
       await graphqlWithAuth(SearchIssuesDocument.loc?.source.body ?? "", {
-        last: 10,
+        last: 30,
         type: "ISSUE",
-        q: "involves:myuon sort:updated-desc",
+        q: Object.entries({
+          involves: name,
+          sort: "updated-desc",
+        })
+          .map(([key, value]) => `${key}:${value}`)
+          .join(" "),
       } as SearchIssuesQueryVariables)
   );
 };
