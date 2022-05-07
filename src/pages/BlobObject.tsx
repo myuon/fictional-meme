@@ -2,10 +2,10 @@ import { useLocation, useParams } from "react-router-dom";
 import { Page } from "../components/Page";
 import { assertIsDefined } from "../helper/assert";
 import { useBlob } from "../api/blob";
-import { LinkButton } from "../components/Button";
+import { Button, LinkButton } from "../components/Button";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { xcode } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { css } from "@emotion/react";
 import {
   PackageItem,
@@ -13,6 +13,9 @@ import {
   parsePackageJson,
 } from "../helper/packageJsonParser";
 import ReactDOM from "react-dom/client";
+import { shift, Strategy, useFloating } from "@floating-ui/react-dom";
+import { theme } from "../components/theme";
+import ListIcon from "@mui/icons-material/List";
 
 const detectLanguageFromFileName = (fileName: string) => {
   if (fileName.endsWith(".ts")) {
@@ -94,6 +97,78 @@ const useEffectOnce = (run: () => void) => {
   }, [run]);
 };
 
+const PackageTooltip = ({
+  item,
+  open,
+  strategy,
+  floating,
+  x,
+  y,
+}: {
+  item: PackageItem;
+  open: boolean;
+  strategy: Strategy;
+  floating: (node: HTMLElement | null) => void;
+  x: string;
+  y: string;
+}) => {
+  return (
+    <span>
+      <div
+        ref={floating}
+        style={{ position: strategy, top: y ?? "", left: x ?? "" }}
+        css={[
+          css`
+            color: ${theme.palette.text.main};
+            background-color: white;
+            box-shadow: ${theme.shadow[4]};
+          `,
+          !open &&
+            css`
+              display: none;
+            `,
+        ]}
+      >
+        <div
+          css={css`
+            display: grid;
+            gap: 4px;
+            margin: 16px 24px;
+          `}
+        >
+          <p>
+            <span
+              css={css`
+                font-weight: bold;
+              `}
+            >
+              {item.name.value}
+            </span>
+            <span
+              css={css`
+                margin-left: 4px;
+              `}
+            >
+              (Latest: <code>7.17.10</code>)
+            </span>
+          </p>
+          <div
+            css={css`
+              display: grid;
+              grid-template-columns: 1fr auto;
+              gap: 8px;
+              align-items: center;
+            `}
+          >
+            <Button color="primary">UPGRADE</Button>
+            <ListIcon />
+          </div>
+        </div>
+      </div>
+    </span>
+  );
+};
+
 const FileViewer = ({
   fileName,
   text,
@@ -104,6 +179,11 @@ const FileViewer = ({
   packageJsonDependency?: PackageJsonDependency;
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
+  const { reference, ...floatingProps } = useFloating({
+    placement: "bottom-start",
+    middleware: [shift()],
+  });
+  const [open, setOpen] = useState(false);
 
   useEffectOnce(() => {
     console.log(packageJsonDependency);
@@ -120,32 +200,23 @@ const FileViewer = ({
         const targetNode = findPackageVersionNode(element, item);
         if (targetNode) {
           const reactRoot = ReactDOM.createRoot(targetNode);
-          const RenderComponent = ({
-            children,
-          }: {
-            children: React.ReactNode;
-          }) => {
-            return (
-              <button
-                css={css`
-                  color: inherit;
-                  text-decoration: underline;
-                `}
-                onClick={() => {
-                  console.log(item);
-                }}
-              >
-                {children}
-              </button>
-            );
-          };
-
           const children = React.createElement("span", {
             dangerouslySetInnerHTML: { __html: targetNode.innerHTML },
             className: targetNode.getAttribute("class"),
           });
 
-          reactRoot.render(<RenderComponent>{children}</RenderComponent>);
+          reactRoot.render(
+            <button
+              css={css`
+                color: inherit;
+                text-decoration: underline;
+              `}
+              ref={reference}
+              onClick={() => setOpen(true)}
+            >
+              {children}
+            </button>
+          );
         }
       }
     }
@@ -160,6 +231,14 @@ const FileViewer = ({
       >
         {text}
       </SyntaxHighlighter>
+
+      {packageJsonDependency && (
+        <PackageTooltip
+          item={packageJsonDependency.devDependencies[0]}
+          open={open}
+          {...floatingProps}
+        />
+      )}
     </div>
   ) : null;
 };

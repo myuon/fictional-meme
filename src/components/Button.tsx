@@ -62,7 +62,7 @@ export const Button = ({
   );
 };
 
-export const LinkButton = ({ children, ...props }: ButtonProps) => {
+export const LinkButton = ({ children, color, ...props }: ButtonProps) => {
   return (
     <button
       {...props}
@@ -70,7 +70,9 @@ export const LinkButton = ({ children, ...props }: ButtonProps) => {
         theme.typography.body,
         css`
           display: inline-block;
-          color: ${theme.palette.text.light};
+          color: ${color === "primary"
+            ? theme.palette.primary.main
+            : theme.palette.text.light};
           text-decoration: underline;
           &:hover {
             text-decoration: none;
