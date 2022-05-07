@@ -42,7 +42,6 @@ export const IssueItem = ({
   title,
   repositoryName,
   updatedAt,
-  latestCommit,
   commit,
 }: {
   variant: "issue" | "pr";
@@ -51,7 +50,6 @@ export const IssueItem = ({
   title: string;
   repositoryName: string;
   updatedAt: string;
-  latestCommit?: string;
   commit?: {
     oid?: string;
     checkStatus?: "success" | "error" | "pending";

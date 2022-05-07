@@ -1,8 +1,16 @@
 import useSWR from "swr";
-import { octokit } from "./octokit";
+import {
+  GetViewerDocument,
+  GetViewerQuery,
+  GetViewerQueryVariables,
+} from "../generated/graphql";
+import { request } from "./fetch";
 
 export const useAuthUser = () => {
-  return useSWR("user.authenticated", () =>
-    octokit.users.getAuthenticated().then((result) => result.data)
+  return useSWR(
+    "viewer",
+    () =>
+      request<GetViewerQueryVariables, GetViewerQuery>(GetViewerDocument, {}),
+    {}
   );
 };

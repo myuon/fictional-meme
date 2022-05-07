@@ -3,8 +3,9 @@ import {
   SearchIssuesDocument,
   SearchIssuesQuery,
   SearchIssuesQueryVariables,
+  SearchType,
 } from "../generated/graphql";
-import { graphqlWithAuth } from "./octokit";
+import { request } from "./fetch";
 
 export const useInvolvedIssues = (
   name: string | undefined,
@@ -12,17 +13,20 @@ export const useInvolvedIssues = (
 ) => {
   return useSWR<SearchIssuesQuery>(
     name ? ["issues.involvedIssues", name] : null,
-    async () =>
-      await graphqlWithAuth(SearchIssuesDocument.loc?.source.body ?? "", {
-        last: 30,
-        type: "ISSUE",
-        q: Object.entries({
-          involves: name,
-          sort: "updated-desc",
-        })
-          .map(([key, value]) => `${key}:${value}`)
-          .join(" "),
-      } as SearchIssuesQueryVariables),
+    () =>
+      request<SearchIssuesQueryVariables, SearchIssuesQuery>(
+        SearchIssuesDocument,
+        {
+          last: 30,
+          type: SearchType.Issue,
+          q: Object.entries({
+            involves: name,
+            sort: "updated-desc",
+          })
+            .map(([key, value]) => `${key}:${value}`)
+            .join(" "),
+        }
+      ),
     {
       refreshInterval: refreshIntervalSeconds * 1000,
     }

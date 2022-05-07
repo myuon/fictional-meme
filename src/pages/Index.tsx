@@ -21,7 +21,7 @@ const fromStatusState = (
 
 export const IndexPage = () => {
   const { data: user } = useAuthUser();
-  const { data: issues } = useInvolvedIssues(user?.login, 5 * 60);
+  const { data: issues } = useInvolvedIssues(user?.viewer.login, 5 * 60);
 
   return (
     <div
@@ -64,7 +64,7 @@ export const IndexPage = () => {
           />
           Gimlet
         </h1>
-        <p>Hi, {user?.name}!</p>
+        <p>Hi, {user?.viewer.name}!</p>
       </header>
 
       <main>
