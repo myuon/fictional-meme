@@ -91,11 +91,15 @@ export const IndexPage = () => {
             issue?.__typename === "PullRequest" ? (
               <IssueItem
                 key={issue.id}
+                {...issue}
                 variant="pr"
                 state={
                   issue.closed ? "closed" : issue.isDraft ? "draft" : "open"
                 }
-                repositoryName={issue.repository.nameWithOwner}
+                repository={{
+                  owner: issue.repository.owner.login,
+                  name: issue.repository.name,
+                }}
                 commit={(() => {
                   if (issue.mergeCommit) {
                     return {
@@ -117,15 +121,17 @@ export const IndexPage = () => {
 
                   return undefined;
                 })()}
-                {...issue}
               />
             ) : issue?.__typename === "Issue" ? (
               <IssueItem
                 key={issue.id}
+                {...issue}
                 variant="issue"
                 state={issue.closed ? "closed" : "open"}
-                repositoryName={issue.repository.nameWithOwner}
-                {...issue}
+                repository={{
+                  owner: issue.repository.owner.login,
+                  name: issue.repository.name,
+                }}
               />
             ) : null
           )}

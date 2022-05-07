@@ -40,7 +40,7 @@ export const IssueItem = ({
   state,
   url,
   title,
-  repositoryName,
+  repository,
   updatedAt,
   commit,
 }: {
@@ -48,7 +48,10 @@ export const IssueItem = ({
   state: "closed" | "open" | "draft";
   url: string;
   title: string;
-  repositoryName: string;
+  repository: {
+    owner: string;
+    name: string;
+  };
   updatedAt: string;
   commit?: {
     oid?: string;
@@ -90,7 +93,9 @@ export const IssueItem = ({
           }
         `}
       >
-        <span key="repositoryName">{repositoryName}</span>
+        <span key="repositoryName">
+          {repository.owner}/{repository.name}
+        </span>
         <span key="updatedAt">{dayjs(updatedAt).fromNow()}</span>
         {commit ? (
           <span key="latestCommit">

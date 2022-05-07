@@ -27,7 +27,10 @@ query searchIssues($last: Int!, $type: SearchType!, $q: String!) {
           }
         }
         repository {
-          nameWithOwner
+          name
+          owner {
+            login
+          }
         }
       }
       ... on Issue {
@@ -37,7 +40,10 @@ query searchIssues($last: Int!, $type: SearchType!, $q: String!) {
         url
         updatedAt
         repository {
-          nameWithOwner
+          name
+          owner {
+            login
+          }
         }
       }
     }
