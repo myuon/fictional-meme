@@ -6,7 +6,6 @@ query searchIssues($last: Int!, $type: SearchType!, $q: String!) {
         id
         title
         closed
-        state
         isDraft
         url
         updatedAt
@@ -23,6 +22,16 @@ query searchIssues($last: Int!, $type: SearchType!, $q: String!) {
             abbreviatedOid
           }
         }
+        repository {
+          nameWithOwner
+        }
+      }
+      ... on Issue {
+        id
+        title
+        closed
+        url
+        updatedAt
         repository {
           nameWithOwner
         }

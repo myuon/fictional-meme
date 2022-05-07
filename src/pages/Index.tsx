@@ -2,12 +2,10 @@ import { css } from "@emotion/react";
 import React from "react";
 import { useAuthUser } from "../api/user";
 import { theme } from "../components/theme";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import dayjs from "dayjs";
-import MergeTypeIcon from "@mui/icons-material/MergeType";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { Loading } from "../components/Loading";
 import { useInvolvedIssues } from "../api/issues";
+import { IssueItem } from "./Index/IssueItem";
 
 export const IndexPage = () => {
   const { data: user } = useAuthUser();
@@ -66,56 +64,20 @@ export const IndexPage = () => {
         >
           {issues?.search.nodes?.map((issue) =>
             issue?.__typename === "PullRequest" ? (
-              <div
-                key={issue.id}
-                css={css`
-                  display: grid;
-                  gap: 8px;
-                `}
-              >
-                <a
-                  href={issue.url}
-                  target="_blank"
-                  css={css`
-                    display: flex;
-                    gap: 6px;
-                    align-items: center;
-                    font-weight: 600;
-                  `}
-                  rel="noreferrer"
-                >
-                  <MergeTypeIcon
-                    data-closed={issue.closed}
-                    css={css`
-                      &[data-closed="true"] {
-                        color: ${theme.palette.semantical.closed.main};
-                      }
-
-                      &[data-closed="false"] {
-                        color: ${theme.palette.semantical.open.main};
-                      }
-                    `}
-                  />
-                  {issue.title}
-                </a>
-                <small
-                  css={css`
-                    color: ${theme.palette.gray[600]};
-
-                    & > span:not(:last-of-type)::after {
-                      content: "・";
-                    }
-                  `}
-                >
-                  <span>{issue.repository?.nameWithOwner}</span>
-                  <span>{dayjs(issue.updatedAt).fromNow()} updated</span>
-                </small>
-              </div>
+              <IssueItem
+                variant="pr"
+                state={
+                  issue.closed ? "closed" : issue.isDraft ? "draft" : "open"
+                }
+                repositoryName={issue.repository.nameWithOwner}
+                {...issue}
+              />
             ) : issue?.__typename === "Issue" ? (
-              <ErrorOutlineIcon
-                css={css`
-                  color: ${theme.palette.semantical.open.main};
-                `}
+              <IssueItem
+                variant="issue"
+                state={issue.closed ? "closed" : "open"}
+                repositoryName={issue.repository.nameWithOwner}
+                {...issue}
               />
             ) : null
           )}

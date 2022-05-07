@@ -41,6 +41,9 @@ export const theme = {
       closed: {
         main: "#4f46e5",
       },
+      draft: {
+        main: "#9aa1ad",
+      },
     },
     gray: {
       50: "#f9fafb",

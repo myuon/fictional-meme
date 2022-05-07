@@ -13,7 +13,7 @@ export const useInvolvedIssues = () => {
       await graphqlWithAuth(SearchIssuesDocument.loc?.source.body ?? "", {
         last: 10,
         type: "ISSUE",
-        q: "involves:myuon is:pr sort:updated-desc",
+        q: "involves:myuon sort:updated-desc",
       } as SearchIssuesQueryVariables)
   );
 };
