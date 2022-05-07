@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import React from "react";
 import { theme } from "./theme";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LinkButton } from "./Button";
 
 export const Page = ({ children }: { children: React.ReactNode }) => {
@@ -36,21 +36,23 @@ export const Page = ({ children }: { children: React.ReactNode }) => {
           theme.glass,
         ]}
       >
-        <h1
-          css={css`
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            color: ${theme.palette.primary.main};
-          `}
-        >
-          <GitHubIcon
+        <Link to="/">
+          <h1
             css={css`
-              font-size: inherit;
+              display: flex;
+              gap: 8px;
+              align-items: center;
+              color: ${theme.palette.primary.main};
             `}
-          />
-          Gimlet
-        </h1>
+          >
+            <GitHubIcon
+              css={css`
+                font-size: inherit;
+              `}
+            />
+            Gimlet
+          </h1>
+        </Link>
         <LinkButton onClick={() => navigate(-1)}>Back</LinkButton>
       </header>
 

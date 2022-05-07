@@ -109,8 +109,8 @@ const PackageTooltip = ({
   open: boolean;
   strategy: Strategy;
   floating: (node: HTMLElement | null) => void;
-  x: string;
-  y: string;
+  x: number | null;
+  y: number | null;
 }) => {
   return (
     <span>
