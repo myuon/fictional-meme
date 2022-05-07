@@ -7,6 +7,10 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { xcode } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import React from "react";
 import { css } from "@emotion/react";
+import {
+  PackageJsonDependency,
+  parsePackageJson,
+} from "../helper/packageJsonParser";
 
 const detectLanguageFromFileName = (fileName: string) => {
   if (fileName.endsWith(".ts")) {
@@ -23,10 +27,13 @@ const detectLanguageFromFileName = (fileName: string) => {
 const FileViewer = ({
   fileName,
   text,
+  packageJsonDependency,
 }: {
   fileName?: string;
   text?: string;
+  packageJsonDependency?: PackageJsonDependency;
 }) => {
+  console.log(packageJsonDependency);
   return text ? (
     <SyntaxHighlighter
       style={xcode}
@@ -66,6 +73,11 @@ export const BlobObjectPage = () => {
           <FileViewer
             fileName={state?.fileName}
             text={data.node.text ?? undefined}
+            packageJsonDependency={
+              state?.fileName === "package.json" && data.node.text
+                ? parsePackageJson(data.node.text)
+                : undefined
+            }
           />
         </div>
       ) : null}
