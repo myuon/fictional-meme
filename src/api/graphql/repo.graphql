@@ -36,3 +36,25 @@ query searchRepository($q: String!) {
     }
   }
 }
+
+query getMyRepositories($first: Int!) {
+  viewer {
+    id
+    login
+    repositories(
+      affiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER]
+      first: $first
+      orderBy: {field: PUSHED_AT, direction: DESC}
+      ownerAffiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER]
+    ) {
+      nodes {
+        id
+        name
+        owner {
+          login
+        }
+      }
+      totalCount
+    }
+  }
+}

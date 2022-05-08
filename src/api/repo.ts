@@ -1,5 +1,8 @@
 import useSWR from "swr";
 import {
+  GetMyRepositoriesDocument,
+  GetMyRepositoriesQuery,
+  GetMyRepositoriesQueryVariables,
   GetRepositoryDocument,
   GetRepositoryQuery,
   GetRepositoryQueryVariables,
@@ -40,6 +43,15 @@ export const useSearchRepository = (
           query,
         ].join(" "),
       }
+    )
+  );
+};
+
+export const useGetMyRepositories = (first: number) => {
+  return useSWR(["repo.my", first], () =>
+    request<GetMyRepositoriesQueryVariables, GetMyRepositoriesQuery>(
+      GetMyRepositoriesDocument,
+      { first }
     )
   );
 };
