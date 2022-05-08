@@ -18,6 +18,7 @@ import { Popper, PopperProps, usePopper } from "../components/Popper";
 import { useEffectOnce } from "../components/useEffectOnce";
 import { detectLanguageFromFileName } from "../helper/detectLanguage";
 import { findLocNode } from "./BlobObject/findLocNode";
+import { flip, inline } from "@floating-ui/react-dom";
 
 const PackageTooltip = ({
   item,
@@ -121,9 +122,12 @@ const FileViewer = ({
                   text-decoration: underline;
                 `}
                 onClick={(event) => {
+                  // popper middleware like shift, flip does not work since call popperRef, update manually here instead of inserting as a ref
                   popperRef(event.currentTarget);
                   setSelectedItem(item);
                   openPopper();
+                  // make sure to call update after opening a popper
+                  props.floatingProps.update();
                 }}
               >
                 {children}

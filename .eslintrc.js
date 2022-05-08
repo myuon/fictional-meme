@@ -23,5 +23,6 @@ module.exports = {
   rules: {
     "css-reorder/property-reorder": "error",
     "react/self-closing-comp": "error",
+    "react/prop-types": "off",
   },
 };
