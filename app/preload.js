@@ -1,18 +1,15 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
-  npmUpgradeLatest: async (arg) => {
-    return await ipcRenderer.invoke("npm:upgradeLatest", arg);
+  startNpmUpgradeLatest: (data, callback) => {
+    const { port1, port2 } = new MessageChannel();
+    ipcRenderer.postMessage("npmUpgradeLatest", data, [port2]);
+
+    port1.onmessage = (event) => {
+      callback(event.data);
+    };
+    port1.onclose = () => {
+      console.log("startNpmUpgradeLatest closed");
+    };
   },
-});
-
-window.addEventListener("DOMContentLoaded", () => {
-  const replaceText = (selector, text) => {
-    const element = document.getElementById(selector);
-    if (element) element.innerText = text;
-  };
-
-  for (const dependency of ["chrome", "node", "electron"]) {
-    replaceText(`${dependency}-version`, process.versions[dependency]);
-  }
 });

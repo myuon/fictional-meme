@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell, ipcMain } = require("electron");
+const { app, BrowserWindow, shell, ipcMain, ipcRenderer } = require("electron");
 const path = require("path");
 const { npmUpgradeLatest } = require("./commands/npmUpgradeLatest");
 const isDev = process.env.NODE_ENV !== "production";
@@ -32,9 +32,14 @@ if (isDev) {
 }
 
 app.whenReady().then(() => {
-  ipcMain.handle("npm:upgradeLatest", async (event, args) => {
-    console.log("npm:upgradeLatest invoked", args);
-    return await npmUpgradeLatest(args);
+  ipcMain.on("npmUpgradeLatest", async (event, msg) => {
+    const [replyPort] = event.ports;
+
+    npmUpgradeLatest(msg, (data) => {
+      replyPort.postMessage(data);
+    });
+
+    replyPort.close();
   });
 
   createWindow();

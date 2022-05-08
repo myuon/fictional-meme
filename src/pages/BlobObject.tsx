@@ -2,7 +2,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { Page } from "../components/Page";
 import { assertIsDefined } from "../helper/assert";
 import { useBlob } from "../api/blob";
-import { Button, LinkButton } from "../components/Button";
+import { AnchorButton, Button, LinkButton } from "../components/Button";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { xcode } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import React, { useRef, useState } from "react";
@@ -18,6 +18,7 @@ import { Popper, PopperProps, usePopper } from "../components/Popper";
 import { useEffectOnce } from "../components/useEffectOnce";
 import { detectLanguageFromFileName } from "../helper/detectLanguage";
 import { findLocNode } from "./BlobObject/findLocNode";
+import { useToasts } from "../components/Toast";
 
 const PackageTooltip = ({
   item,
@@ -98,12 +99,14 @@ const FileViewer = ({
   packageJsonDependency,
   repositoryName,
   repositoryPath,
+  ownerName,
 }: {
   fileName?: string;
   text?: string;
   packageJsonDependency?: PackageJsonDependency;
   repositoryName?: string;
   repositoryPath?: string;
+  ownerName?: string;
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -153,6 +156,8 @@ const FileViewer = ({
     }
   });
 
+  const { addToast, updateToast } = useToasts();
+
   return text ? (
     <div ref={ref}>
       <SyntaxHighlighter
@@ -167,14 +172,48 @@ const FileViewer = ({
         <PackageTooltip
           item={selectedItem}
           onUpgrade={async (item) => {
-            const branchName = await window.electronAPI.npmUpgradeLatest({
-              packageName: item.name.value,
-              repositoryPath,
-              repositoryName,
-            });
-            if (branchName) {
-              console.log(`${branchName} created and pushed!`);
-            }
+            let toastId = "";
+
+            window.electronAPI.startNpmUpgradeLatest(
+              {
+                packageName: item.name.value,
+                repositoryPath,
+                repositoryName,
+              },
+              (event) => {
+                console.log(event);
+                if (event.type === "start") {
+                  const t = addToast(event.message, {
+                    loading: true,
+                    progress: event.progress,
+                    width: 350,
+                  });
+                  toastId = t;
+                } else if (event.type === "message") {
+                  updateToast(toastId, {
+                    message: event.message,
+                    loading: true,
+                    progress: event.progress,
+                    width: 350,
+                  });
+                } else if (event.type === "done") {
+                  updateToast(toastId, {
+                    message: (
+                      <>
+                        {event.message}{" "}
+                        <AnchorButton
+                          href={`https://github.com/${ownerName}/${repositoryName}/compare/main...${event.branchName}`}
+                        >
+                          Create PR now!
+                        </AnchorButton>
+                      </>
+                    ),
+                    loading: false,
+                    width: 350,
+                  });
+                }
+              }
+            );
           }}
           {...props}
         />
@@ -189,7 +228,12 @@ export const BlobObjectPage = () => {
 
   const location = useLocation();
   const state = location.state as
-    | { fileName: string; repositoryPath: string; repositoryName: string }
+    | {
+        fileName: string;
+        repositoryPath: string;
+        repositoryName: string;
+        ownerName: string;
+      }
     | undefined;
 
   const { data } = useBlob(id);
@@ -213,6 +257,7 @@ export const BlobObjectPage = () => {
           <FileViewer
             repositoryPath={state?.repositoryPath}
             repositoryName={state?.repositoryName}
+            ownerName={state?.ownerName}
             fileName={state?.fileName}
             text={data.node.text ?? undefined}
             packageJsonDependency={

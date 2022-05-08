@@ -36,7 +36,20 @@ const styles = {
         background-color: ${theme.palette.gray[300]};
       }
     `,
+    textPrimary: css`
+      color: ${theme.palette.primary.main};
+    `,
+    textDefault: css`
+      color: ${theme.palette.text.light};
+    `,
   },
+  linkLike: css`
+    display: inline-block;
+    text-decoration: underline;
+    &:hover {
+      text-decoration: none;
+    }
+  `,
 };
 
 export interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
@@ -68,19 +81,34 @@ export const LinkButton = ({ children, color, ...props }: ButtonProps) => {
       {...props}
       css={[
         theme.typography.body,
-        css`
-          display: inline-block;
-          color: ${color === "primary"
-            ? theme.palette.primary.main
-            : theme.palette.text.light};
-          text-decoration: underline;
-          &:hover {
-            text-decoration: none;
-          }
-        `,
+        styles.linkLike,
+        color === "primary"
+          ? styles.colors.textPrimary
+          : styles.colors.textDefault,
       ]}
     >
       {children}
     </button>
+  );
+};
+
+export const AnchorButton = ({
+  children,
+  color,
+  ...props
+}: { color?: "primary" | "default" } & React.ComponentPropsWithoutRef<"a">) => {
+  return (
+    <a
+      {...props}
+      css={[
+        theme.typography.body,
+        styles.linkLike,
+        color === "primary"
+          ? styles.colors.textPrimary
+          : styles.colors.textDefault,
+      ]}
+    >
+      {children}
+    </a>
   );
 };

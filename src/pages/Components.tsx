@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button } from "../components/Button";
+import { AnchorButton, Button } from "../components/Button";
 import { Progress } from "../components/Progress";
 import { theme } from "../components/theme";
 import { Toast, useToasts } from "../components/Toast";
@@ -154,6 +154,20 @@ export const ComponentsPage = () => {
             message="こんにちは これはトーストのサンプルです。"
             loading
             progress={0.5}
+            disableAnimation
+          />
+        </div>
+        <div className="row">
+          <Toast
+            id=""
+            message={
+              <>
+                <AnchorButton href="https://example.com">
+                  https://example.com
+                </AnchorButton>
+                へのリンク
+              </>
+            }
             disableAnimation
           />
         </div>

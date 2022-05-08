@@ -92,6 +92,7 @@ export const RepositoryPage = () => {
                       fileName: obj.name,
                       repositoryPath: `git@github.com:${owner}/${name}.git`,
                       repositoryName: name,
+                      ownerName: owner,
                     }}
                     key={obj.oid}
                     css={css`

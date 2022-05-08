@@ -20,7 +20,7 @@ export interface ToastOptions {
 
 interface ToastState {
   id: string;
-  message: string;
+  message: React.ReactNode;
   timer: NodeJS.Timeout | undefined;
   loading?: boolean;
   progress?: number;
@@ -29,11 +29,11 @@ interface ToastState {
 
 interface ToastContextProps {
   toasts: Record<string, ToastState>;
-  addToast: (message: string, options?: ToastOptions) => string;
+  addToast: (message: React.ReactNode, options?: ToastOptions) => string;
   updateToast: (
     id: string,
     props: {
-      message?: string;
+      message?: React.ReactNode;
     } & ToastOptions
   ) => void;
   removeToast: (id: string) => void;
@@ -55,7 +55,10 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const updateToast = useCallback(
-    (id: string, { timeout, ...props }: { message: string } & ToastOptions) => {
+    (
+      id: string,
+      { timeout, ...props }: { message: React.ReactNode } & ToastOptions
+    ) => {
       setToasts((prev) => {
         const current = { ...prev };
         let target = current[id];
@@ -122,6 +125,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
           position: fixed;
           top: 16px;
           right: 16px;
+          z-index: 10;
           display: grid;
 
           & > *:not(:first-of-type) {
@@ -170,7 +174,7 @@ export const Toast = ({
   width,
 }: {
   id: string;
-  message: string;
+  message: React.ReactNode;
   disableAnimation?: boolean;
   loading?: boolean;
   progress?: number;
@@ -188,7 +192,6 @@ export const Toast = ({
       data-show={show}
       css={[
         css`
-          z-index: 3;
           max-width: 350px;
           color: white;
           background-color: ${theme.palette.primary.main};
@@ -222,6 +225,10 @@ export const Toast = ({
               text-overflow: clip;
               -webkit-box-orient: vertical;
               -webkit-line-clamp: 2;
+
+              a {
+                color: white;
+              }
             `}
           >
             {message}

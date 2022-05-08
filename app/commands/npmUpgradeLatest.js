@@ -19,18 +19,31 @@ const commandWithStatus = (commands, cwd) => {
 };
 
 // prepare workdir
-const workDir = path.join(__dirname, "workdir");
+const workDir = path.join(__dirname, "../../workdir");
 command(["mkdir", "-p", workDir]);
 
-const npmUpgradeLatest = async ({
-  packageName,
-  repositoryName,
-  repositoryPath,
-}) => {
+const npmUpgradeLatest = async (
+  { packageName, repositoryName, repositoryPath },
+  sendEvent
+) => {
   const repoDir = path.join(workDir, repositoryName);
+  const progressSum = 6;
+  let progressCounter = 0;
+
+  sendEvent({
+    message: `Started`,
+    progress: progressCounter++ / progressSum,
+    type: "start",
+  });
 
   // clone a repository OR switch to default branch
   if (fs.existsSync(repoDir)) {
+    sendEvent({
+      message: `Syncing ${repositoryName}...`,
+      progress: progressCounter++ / progressSum,
+      type: "message",
+    });
+
     // This only works for a repository cloned from origin
     const branch = command(
       ["git rev-parse --abbrev-ref origin/HEAD | cut -d '/' -f 2"],
@@ -43,6 +56,12 @@ const npmUpgradeLatest = async ({
     command(["git", "fetch"], repoDir);
     console.log(`[npm:upgradeLatest] git fetch executed`);
   } else {
+    sendEvent({
+      message: `Cloning ${repositoryName}...`,
+      progress: progressCounter++ / progressSum,
+      type: "message",
+    });
+
     command(["git", "clone", repositoryPath], workDir);
     console.log(`[npm:upgradeLatest] cloned ${repositoryName}`);
   }
@@ -54,9 +73,21 @@ const npmUpgradeLatest = async ({
   command(["git", "checkout", "-b", branchName], repoDir);
 
   // install dependencies
+  sendEvent({
+    message: `Installing dependencies...`,
+    progress: progressCounter++ / progressSum,
+    type: "message",
+  });
+
   if (fs.existsSync(path.join(repoDir, "package-lock.json"))) {
     console.log(`[npm:upgradeLatest] npm ci`);
     console.log(command(["npm", "ci"], repoDir).stdout.toString().trim());
+
+    sendEvent({
+      message: `Updating...`,
+      progress: progressCounter++ / progressSum,
+      type: "message",
+    });
 
     console.log(`[npm:upgradeLatest] npm update ${packageName}`);
     console.log(
@@ -65,6 +96,12 @@ const npmUpgradeLatest = async ({
   } else if (fs.existsSync(path.join(repoDir, "yarn.lock"))) {
     console.log(`[npm:upgradeLatest] yarn install`);
     console.log(command(["yarn", "install"], repoDir).stdout.toString().trim());
+
+    sendEvent({
+      message: `Updating...`,
+      progress: progressCounter++ / progressSum,
+      type: "message",
+    });
 
     console.log(`[npm:upgradeLatest] yarn upgrade ${packageName} --latest`);
     console.log(
@@ -88,6 +125,12 @@ const npmUpgradeLatest = async ({
     return;
   }
 
+  sendEvent({
+    message: `Pushing to remote repository...`,
+    progress: progressCounter++ / progressSum,
+    type: "message",
+  });
+
   // commit and push
   command(["git", "add", "."], repoDir);
   console.log(
@@ -103,7 +146,12 @@ const npmUpgradeLatest = async ({
     ).stdout.toString()}`
   );
 
-  return branchName;
+  sendEvent({
+    message: `Done!`,
+    progress: progressCounter++ / progressSum,
+    type: "done",
+    branchName,
+  });
 };
 
 module.exports = { npmUpgradeLatest };
