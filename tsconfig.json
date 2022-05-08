@@ -14,5 +14,6 @@
     "jsxImportSource": "@emotion/react",
     "allowSyntheticDefaultImports": true,
     "lib": ["es2021", "dom"]
-  }
+  },
+  "include": ["src", "app"]
 }

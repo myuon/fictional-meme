@@ -18,13 +18,14 @@ import { Popper, PopperProps, usePopper } from "../components/Popper";
 import { useEffectOnce } from "../components/useEffectOnce";
 import { detectLanguageFromFileName } from "../helper/detectLanguage";
 import { findLocNode } from "./BlobObject/findLocNode";
-import { flip, inline } from "@floating-ui/react-dom";
 
 const PackageTooltip = ({
   item,
+  onUpgrade,
   ...props
 }: {
   item?: PackageItem;
+  onUpgrade: (item: PackageItem) => void;
 } & Omit<PopperProps, "children">) => {
   return (
     <Popper {...props}>
@@ -48,7 +49,7 @@ const PackageTooltip = ({
               margin-left: 4px;
             `}
           >
-            (Latest: <code>7.17.10</code>)
+            (Current: <code>{item?.version.value}</code>)
           </span>
         </p>
         <div
@@ -59,7 +60,16 @@ const PackageTooltip = ({
             align-items: center;
           `}
         >
-          <Button color="primary">UPGRADE</Button>
+          <Button
+            color="primary"
+            onClick={() => {
+              if (item) {
+                onUpgrade(item);
+              }
+            }}
+          >
+            UPGRADE
+          </Button>
           <ListIcon />
         </div>
       </div>
@@ -86,10 +96,14 @@ const FileViewer = ({
   fileName,
   text,
   packageJsonDependency,
+  repositoryName,
+  repositoryPath,
 }: {
   fileName?: string;
   text?: string;
   packageJsonDependency?: PackageJsonDependency;
+  repositoryName?: string;
+  repositoryPath?: string;
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -150,7 +164,20 @@ const FileViewer = ({
       </SyntaxHighlighter>
 
       {packageJsonDependency && (
-        <PackageTooltip item={selectedItem} {...props} />
+        <PackageTooltip
+          item={selectedItem}
+          onUpgrade={async (item) => {
+            const branchName = await window.electronAPI.npmUpgradeLatest({
+              packageName: item.name.value,
+              repositoryPath,
+              repositoryName,
+            });
+            if (branchName) {
+              console.log(`${branchName} created and pushed!`);
+            }
+          }}
+          {...props}
+        />
       )}
     </div>
   ) : null;
@@ -161,7 +188,9 @@ export const BlobObjectPage = () => {
   assertIsDefined(id);
 
   const location = useLocation();
-  const state = location.state as { fileName: string } | undefined;
+  const state = location.state as
+    | { fileName: string; repositoryPath: string; repositoryName: string }
+    | undefined;
 
   const { data } = useBlob(id);
 
@@ -182,6 +211,8 @@ export const BlobObjectPage = () => {
           </p>
 
           <FileViewer
+            repositoryPath={state?.repositoryPath}
+            repositoryName={state?.repositoryName}
             fileName={state?.fileName}
             text={data.node.text ?? undefined}
             packageJsonDependency={

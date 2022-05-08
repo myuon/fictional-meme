@@ -1,5 +1,6 @@
-const { app, BrowserWindow, shell } = require("electron");
+const { app, BrowserWindow, shell, ipcMain } = require("electron");
 const path = require("path");
+const { npmUpgradeLatest } = require("./commands/npmUpgradeLatest");
 const isDev = process.env.NODE_ENV !== "production";
 
 const createWindow = () => {
@@ -31,6 +32,11 @@ if (isDev) {
 }
 
 app.whenReady().then(() => {
+  ipcMain.handle("npm:upgradeLatest", async (event, args) => {
+    console.log("npm:upgradeLatest invoked", args);
+    return await npmUpgradeLatest(args);
+  });
+
   createWindow();
 
   app.on("activate", () => {
