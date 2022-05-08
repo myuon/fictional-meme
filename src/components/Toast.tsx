@@ -11,15 +11,31 @@ import { theme } from "./theme";
 import CloseIcon from "@mui/icons-material/Close";
 import { Progress } from "./Progress";
 
+export interface ToastOptions {
+  timeout?: number;
+  loading?: boolean;
+  progress?: number;
+  width?: number;
+}
+
 interface ToastState {
   id: string;
   message: string;
   timer: NodeJS.Timeout | undefined;
+  loading?: boolean;
+  progress?: number;
+  width?: number;
 }
 
 interface ToastContextProps {
-  toasts: ToastState[];
-  addToast: (message: string, options?: { timeout?: number }) => string;
+  toasts: Record<string, ToastState>;
+  addToast: (message: string, options?: ToastOptions) => string;
+  updateToast: (
+    id: string,
+    props: {
+      message?: string;
+    } & ToastOptions
+  ) => void;
   removeToast: (id: string) => void;
 }
 
@@ -28,14 +44,48 @@ const ToastContext = React.createContext<ToastContextProps | undefined>(
 );
 
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
-  const [toasts, setToasts] = useState<ToastState[]>([]);
+  const [toasts, setToasts] = useState<Record<string, ToastState>>({});
+
   const removeToast = useCallback((targetId: string) => {
-    setToasts((prev) => [...prev].filter(({ id }) => id !== targetId));
+    setToasts((prev) => {
+      const current = { ...prev };
+      delete current[targetId];
+      return current;
+    });
   }, []);
+
+  const updateToast = useCallback(
+    (id: string, { timeout, ...props }: { message: string } & ToastOptions) => {
+      setToasts((prev) => {
+        const current = { ...prev };
+        let target = current[id];
+        // This is so awkward
+        target = {
+          ...props,
+          id: target.id,
+          timer: target.timer,
+        };
+
+        // if timeout is set, reset and start a new timer
+        if (timeout) {
+          clearTimeout(target.timer as number | undefined);
+          target.timer = setTimeout(() => {
+            removeToast(id);
+          }, timeout);
+        }
+
+        current[id] = target;
+
+        return current;
+      });
+    },
+    [removeToast]
+  );
+
   const addToast = useCallback(
-    (message: string, options?: { timeout?: number }) => {
+    (message: string, options?: ToastOptions) => {
       const id = `toast-${Math.random().toString(36).slice(2, 9)}`;
-      const toast = { id, message, timer: undefined } as ToastState;
+      const toast = { id, message, timer: undefined, ...options } as ToastState;
       if (options?.timeout) {
         const timer = setTimeout(() => {
           removeToast(id);
@@ -43,7 +93,12 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
         toast.timer = timer;
       }
 
-      setToasts((prev) => [...prev, toast]);
+      setToasts((prev) => ({
+        ...prev,
+        [id]: toast,
+      }));
+
+      return id;
     },
     [removeToast]
   );
@@ -53,9 +108,10 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       ({
         toasts,
         addToast,
+        updateToast,
         removeToast,
       } as ToastContextProps),
-    [addToast, removeToast, toasts]
+    [addToast, removeToast, toasts, updateToast]
   );
 
   return (
@@ -73,7 +129,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
           }
         `}
       >
-        {toasts.map(({ id, message }) => (
+        {Object.keys(toasts).map((id) => (
           <div
             key={id}
             css={css`
@@ -81,7 +137,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               margin-left: auto;
             `}
           >
-            <Toast key={id} id={id} message={message} />
+            <Toast key={id} {...toasts[id]} />
           </div>
         ))}
       </div>
@@ -99,8 +155,9 @@ export const useToasts = () => {
     () => ({
       addToast: ctx.addToast,
       removeToast: ctx.removeToast,
+      updateToast: ctx.updateToast,
     }),
-    [ctx.addToast, ctx.removeToast]
+    [ctx.addToast, ctx.removeToast, ctx.updateToast]
   );
 };
 
@@ -110,12 +167,14 @@ export const Toast = ({
   disableAnimation = false,
   loading = false,
   progress,
+  width,
 }: {
   id: string;
   message: string;
   disableAnimation?: boolean;
   loading?: boolean;
   progress?: number;
+  width?: number;
 }) => {
   const { removeToast } = useToasts();
   // for animation
@@ -143,6 +202,7 @@ export const Toast = ({
             transform: translateX(100%);
           }
         `,
+        width && { width },
       ]}
     >
       <div
@@ -191,7 +251,7 @@ export const Toast = ({
           </button>
         )}
       </div>
-      {progress && <Progress progress={progress} />}
+      {progress !== undefined && <Progress progress={progress} />}
     </div>
   );
 };

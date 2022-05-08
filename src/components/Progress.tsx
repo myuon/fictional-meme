@@ -10,12 +10,17 @@ export const Progress = ({ progress }: { progress: number }) => {
       `}
     >
       <div
-        css={css`
-          position: absolute;
-          width: ${progress * 100}%;
-          height: 4px;
-          background-color: ${theme.palette.primary.dark};
-        `}
+        css={[
+          css`
+            position: absolute;
+            width: ${progress * 100}%;
+            height: 4px;
+            background-color: ${theme.palette.primary.dark};
+          `,
+          css`
+            transition: width 0.2s ease-in-out;
+          `,
+        ]}
       />
       <div
         css={css`

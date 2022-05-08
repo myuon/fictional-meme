@@ -6,9 +6,10 @@ import { Button } from "../components/Button";
 import { Progress } from "../components/Progress";
 import { theme } from "../components/theme";
 import { Toast, useToasts } from "../components/Toast";
+import { sleep } from "../helper/sleep";
 
 export const ComponentsPage = () => {
-  const { addToast } = useToasts();
+  const { addToast, updateToast } = useToasts();
 
   return (
     <main
@@ -182,8 +183,47 @@ export const ComponentsPage = () => {
           </Button>
 
           <Button
-            onClick={() => {
-              addToast(`Hi! Timeout: 3s`, { timeout: 3000 });
+            onClick={async () => {
+              const id = addToast(`Starting a job... [1/3]`, {
+                width: 350,
+                loading: true,
+                progress: 0,
+              });
+
+              await sleep(3000);
+
+              updateToast(id, {
+                message: `Doing the job... [2/3]`,
+                width: 350,
+                loading: true,
+                progress: 0.33,
+              });
+
+              await sleep(3000);
+
+              updateToast(id, {
+                message: `Doing the job... [3/3]`,
+                width: 350,
+                loading: true,
+                progress: 0.66,
+              });
+
+              await sleep(3000);
+
+              updateToast(id, {
+                message: `Finishing the job...`,
+                width: 350,
+                loading: true,
+                progress: 1.0,
+              });
+
+              await sleep(3000);
+
+              updateToast(id, {
+                message: `Done!`,
+                loading: false,
+                progress: undefined,
+              });
             }}
           >
             Add Toast with timeout
