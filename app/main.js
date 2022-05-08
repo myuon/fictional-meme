@@ -1,7 +1,7 @@
 const { app, BrowserWindow, shell, ipcMain, ipcRenderer } = require("electron");
 const path = require("path");
 const { npmUpgradeLatest } = require("./commands/npmUpgradeLatest");
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.NODE_ENV === "development";
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({

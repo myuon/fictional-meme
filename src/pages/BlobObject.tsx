@@ -203,6 +203,7 @@ const FileViewer = ({
                         {event.message}{" "}
                         <AnchorButton
                           href={`https://github.com/${ownerName}/${repositoryName}/compare/main...${event.branchName}`}
+                          blank
                         >
                           Create PR now!
                         </AnchorButton>

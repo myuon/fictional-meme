@@ -95,11 +95,16 @@ export const LinkButton = ({ children, color, ...props }: ButtonProps) => {
 export const AnchorButton = ({
   children,
   color,
+  blank,
   ...props
-}: { color?: "primary" | "default" } & React.ComponentPropsWithoutRef<"a">) => {
+}: {
+  color?: "primary" | "default";
+  blank?: boolean;
+} & React.ComponentPropsWithoutRef<"a">) => {
   return (
     <a
       {...props}
+      {...(blank && { target: "_blank", rel: "noopener noreferrer" })}
       css={[
         theme.typography.body,
         styles.linkLike,
