@@ -1,3 +1,4 @@
+import { DotSpinner } from "@uiball/loaders";
 import { css } from "@emotion/react";
 import React, {
   useCallback,
@@ -8,6 +9,7 @@ import React, {
 } from "react";
 import { theme } from "./theme";
 import CloseIcon from "@mui/icons-material/Close";
+import { Progress } from "./Progress";
 
 interface ToastState {
   id: string;
@@ -102,10 +104,22 @@ export const useToasts = () => {
   );
 };
 
-export const Toast = ({ id, message }: { id: string; message: string }) => {
+export const Toast = ({
+  id,
+  message,
+  disableAnimation = false,
+  loading = false,
+  progress,
+}: {
+  id: string;
+  message: string;
+  disableAnimation?: boolean;
+  loading?: boolean;
+  progress?: number;
+}) => {
   const { removeToast } = useToasts();
   // for animation
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(disableAnimation ? true : false);
   useEffect(() => {
     setShow(true);
   }, []);
@@ -116,12 +130,7 @@ export const Toast = ({ id, message }: { id: string; message: string }) => {
       css={[
         css`
           z-index: 3;
-          display: grid;
-          grid-template-columns: 1fr auto;
-          gap: 16px;
-          align-items: center;
           max-width: 350px;
-          padding: 12px 16px;
           color: white;
           background-color: ${theme.palette.primary.main};
           border-radius: 4px;
@@ -136,34 +145,53 @@ export const Toast = ({ id, message }: { id: string; message: string }) => {
         `,
       ]}
     >
-      <div>
-        <p
-          css={css`
-            display: -webkit-box;
-            overflow: hidden;
-            text-overflow: clip;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
-          `}
-        >
-          {message}
-        </p>
-      </div>
-      <button
-        onClick={() => {
-          removeToast(id);
-        }}
+      <div
         css={css`
           display: grid;
-          place-items: center;
+          grid-template-columns: 1fr auto;
+          gap: 16px;
+          align-items: center;
+          padding: 12px 16px;
         `}
       >
-        <CloseIcon
-          css={css`
-            color: white;
-          `}
-        />
-      </button>
+        <div>
+          <p
+            css={css`
+              display: -webkit-box;
+              overflow: hidden;
+              text-overflow: clip;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+            `}
+          >
+            {message}
+          </p>
+        </div>
+        {loading ? (
+          <DotSpinner
+            size={theme.typography.body.fontSize * 1.3}
+            speed={0.9}
+            color="white"
+          />
+        ) : (
+          <button
+            onClick={() => {
+              removeToast(id);
+            }}
+            css={css`
+              display: grid;
+              place-items: center;
+            `}
+          >
+            <CloseIcon
+              css={css`
+                color: white;
+              `}
+            />
+          </button>
+        )}
+      </div>
+      {progress && <Progress progress={progress} />}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/Button";
+import { Progress } from "../components/Progress";
 import { theme } from "../components/theme";
 import { Toast, useToasts } from "../components/Toast";
 
@@ -132,11 +133,29 @@ export const ComponentsPage = () => {
           <h3>Toast</h3>
         </header>
 
-        <Toast id="" message="こんにちは これはトーストです。" />
-        <Toast
-          id=""
-          message="「今は昔、竹取の翁（おきな）といふものありけり。 野山にまじりて竹を取りつつ、よろづのことに使ひけり。 名をば、さぬきの造（みやつこ）となむいひける。 その竹の中に、もと光る竹なむ一筋（ひとすぢ）ありける。"
-        />
+        <div className="row">
+          <Toast
+            id=""
+            message="こんにちは これはトーストです。"
+            disableAnimation
+          />
+        </div>
+        <div className="row">
+          <Toast
+            id=""
+            message="「今は昔、竹取の翁（おきな）といふものありけり。 野山にまじりて竹を取りつつ、よろづのことに使ひけり。 名をば、さぬきの造（みやつこ）となむいひける。 その竹の中に、もと光る竹なむ一筋（ひとすぢ）ありける。"
+            disableAnimation
+          />
+        </div>
+        <div className="row">
+          <Toast
+            id=""
+            message="こんにちは これはトーストのサンプルです。"
+            loading
+            progress={0.5}
+            disableAnimation
+          />
+        </div>
 
         <div
           className="row"
@@ -169,6 +188,20 @@ export const ComponentsPage = () => {
           >
             Add Toast with timeout
           </Button>
+        </div>
+      </section>
+
+      <section>
+        <header>
+          <h3>Progress</h3>
+        </header>
+
+        <div
+          css={css`
+            max-width: 400px;
+          `}
+        >
+          <Progress progress={0.2} />
         </div>
       </section>
     </main>
