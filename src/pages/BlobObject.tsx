@@ -5,7 +5,7 @@ import { useBlob } from "../api/blob";
 import { Button, LinkButton } from "../components/Button";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { xcode } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { css } from "@emotion/react";
 import {
   PackageItem,
@@ -13,21 +13,10 @@ import {
   parsePackageJson,
 } from "../helper/packageJsonParser";
 import ReactDOM from "react-dom/client";
-import { shift, Strategy, useFloating } from "@floating-ui/react-dom";
-import { theme } from "../components/theme";
 import ListIcon from "@mui/icons-material/List";
-
-const detectLanguageFromFileName = (fileName: string) => {
-  if (fileName.endsWith(".ts")) {
-    return "typescript";
-  } else if (fileName.endsWith(".js")) {
-    return "javascript";
-  } else if (fileName.endsWith(".json")) {
-    return "json";
-  } else {
-    return undefined;
-  }
-};
+import { Popper, PopperProps, usePopper } from "../components/Popper";
+import { useEffectOnce } from "../components/useEffectOnce";
+import { detectLanguageFromFileName } from "../helper/detectLanguage";
 
 const findPackageVersionNode = (element: HTMLElement, item: PackageItem) => {
   const getElementByLine = (element: HTMLElement, nth: number) => {
@@ -86,86 +75,50 @@ const findPackageVersionNode = (element: HTMLElement, item: PackageItem) => {
   }
 };
 
-const useEffectOnce = (run: () => void) => {
-  const once = useRef(false);
-
-  useEffect(() => {
-    if (!once.current) {
-      run();
-      once.current = true;
-    }
-  }, [run]);
-};
-
 const PackageTooltip = ({
   item,
-  open,
-  strategy,
-  floating,
-  x,
-  y,
+  ...props
 }: {
   item: PackageItem;
-  open: boolean;
-  strategy: Strategy;
-  floating: (node: HTMLElement | null) => void;
-  x: number | null;
-  y: number | null;
-}) => {
+} & Omit<PopperProps, "children">) => {
   return (
-    <span>
+    <Popper {...props}>
       <div
-        ref={floating}
-        style={{ position: strategy, top: y ?? "", left: x ?? "" }}
-        css={[
-          css`
-            color: ${theme.palette.text.main};
-            background-color: white;
-            box-shadow: ${theme.shadow[4]};
-          `,
-          !open &&
-            css`
-              display: none;
-            `,
-        ]}
+        css={css`
+          display: grid;
+          gap: 4px;
+          margin: 16px 24px;
+        `}
       >
+        <p>
+          <span
+            css={css`
+              font-weight: bold;
+            `}
+          >
+            {item.name.value}
+          </span>
+          <span
+            css={css`
+              margin-left: 4px;
+            `}
+          >
+            (Latest: <code>7.17.10</code>)
+          </span>
+        </p>
         <div
           css={css`
             display: grid;
-            gap: 4px;
-            margin: 16px 24px;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            align-items: center;
           `}
         >
-          <p>
-            <span
-              css={css`
-                font-weight: bold;
-              `}
-            >
-              {item.name.value}
-            </span>
-            <span
-              css={css`
-                margin-left: 4px;
-              `}
-            >
-              (Latest: <code>7.17.10</code>)
-            </span>
-          </p>
-          <div
-            css={css`
-              display: grid;
-              grid-template-columns: 1fr auto;
-              gap: 8px;
-              align-items: center;
-            `}
-          >
-            <Button color="primary">UPGRADE</Button>
-            <ListIcon />
-          </div>
+          <Button color="primary">UPGRADE</Button>
+          <ListIcon />
         </div>
       </div>
-    </span>
+    </Popper>
   );
 };
 
@@ -179,11 +132,9 @@ const FileViewer = ({
   packageJsonDependency?: PackageJsonDependency;
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const { reference, ...floatingProps } = useFloating({
-    placement: "bottom-start",
-    middleware: [shift()],
-  });
   const [open, setOpen] = useState(false);
+
+  const { ref: popperRef, props: popperProps } = usePopper();
 
   useEffectOnce(() => {
     console.log(packageJsonDependency);
@@ -211,7 +162,7 @@ const FileViewer = ({
                 color: inherit;
                 text-decoration: underline;
               `}
-              ref={reference}
+              ref={popperRef}
               onClick={() => setOpen(true)}
             >
               {children}
@@ -236,7 +187,7 @@ const FileViewer = ({
         <PackageTooltip
           item={packageJsonDependency.devDependencies[0]}
           open={open}
-          {...floatingProps}
+          floatingProps={popperProps}
         />
       )}
     </div>

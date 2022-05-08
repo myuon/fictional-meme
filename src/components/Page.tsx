@@ -28,6 +28,7 @@ export const Page = ({ children }: { children: React.ReactNode }) => {
           css`
             position: sticky;
             top: 0;
+            z-index: 2;
             display: flex;
             align-items: center;
             justify-content: space-between;
