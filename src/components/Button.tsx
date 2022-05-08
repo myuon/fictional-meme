@@ -75,7 +75,30 @@ export const Button = ({
   );
 };
 
-export const LinkButton = ({ children, color, ...props }: ButtonProps) => {
+export const IconButton = ({
+  rounded,
+  ...props
+}: Omit<ButtonProps, "color">) => {
+  return (
+    <button
+      {...props}
+      css={[
+        theme.typography.button,
+        styles.base,
+        css`
+          padding: 8px;
+        `,
+        rounded && styles.rounded,
+      ]}
+    />
+  );
+};
+
+export const LinkButton = ({
+  children,
+  color,
+  ...props
+}: Omit<ButtonProps, "rounded">) => {
   return (
     <button
       {...props}

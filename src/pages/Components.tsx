@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
 import { AnchorButton, Button } from "../components/Button";
+import { Modal, useModal } from "../components/Modal";
 import { Progress } from "../components/Progress";
 import { theme } from "../components/theme";
 import { Toast, useToasts } from "../components/Toast";
@@ -10,6 +11,7 @@ import { sleep } from "../helper/sleep";
 
 export const ComponentsPage = () => {
   const { addToast, updateToast } = useToasts();
+  const { openModal, ...modal } = useModal({ closeOnClickOutside: true });
 
   return (
     <main
@@ -256,6 +258,35 @@ export const ComponentsPage = () => {
           `}
         >
           <Progress progress={0.2} />
+        </div>
+      </section>
+
+      <section>
+        <header>
+          <h3>Modal</h3>
+        </header>
+
+        <div>
+          <Button
+            onClick={() => {
+              openModal();
+            }}
+          >
+            Open Modal
+          </Button>
+
+          <Modal {...modal}>
+            <div
+              css={css`
+                display: grid;
+                gap: 8px;
+              `}
+            >
+              <h3>This is a Modal</h3>
+
+              <p>Here is a information for you. Are you sure?</p>
+            </div>
+          </Modal>
         </div>
       </section>
     </main>

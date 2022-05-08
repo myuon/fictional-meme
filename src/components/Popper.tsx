@@ -4,7 +4,7 @@ import {
   UseFloatingProps,
   UseFloatingReturn,
 } from "@floating-ui/react-dom/src";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import React from "react";
 import { theme } from "./theme";
 import { useClickOutside } from "./useClickOutside";
@@ -51,8 +51,7 @@ export const Popper = ({
   children,
   floatingProps,
 }: PopperProps) => {
-  const clickAreaRef = useRef<HTMLDivElement | null>(null);
-  useClickOutside(clickAreaRef, onClose);
+  const clickAreaRef = useClickOutside<HTMLDivElement>(onClose);
 
   return (
     <div ref={clickAreaRef}>
