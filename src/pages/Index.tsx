@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import React from "react";
+import React, { useState } from "react";
 import { useAuthUser } from "../api/user";
 import { Loading } from "../components/Loading";
 import { useInvolvedIssues } from "../api/issues";
@@ -7,6 +7,7 @@ import { IssueItem } from "./Index/IssueItem";
 import { Link } from "react-router-dom";
 import DeveloperModeIcon from "@mui/icons-material/DeveloperMode";
 import { Page } from "../components/Page";
+import { Button } from "../components/Button";
 
 const fromStatusState = (
   state: "EXPECTED" | "ERROR" | "FAILURE" | "PENDING" | "SUCCESS" | undefined
@@ -21,8 +22,14 @@ const fromStatusState = (
 };
 
 export const IndexPage = () => {
+  const [mode, setMode] = useState<"you" | "yourTeam">("you");
+
   const { data: user } = useAuthUser();
-  const { data: issues } = useInvolvedIssues(user?.viewer.login, 5 * 60);
+  const { data: issues } = useInvolvedIssues(
+    user?.viewer.login,
+    mode === "you" ? user?.viewer.login : undefined,
+    5 * 60
+  );
 
   return (
     <Page
@@ -41,6 +48,31 @@ export const IndexPage = () => {
       }
     >
       {!issues && <Loading />}
+      {issues && (
+        <div
+          css={css`
+            display: flex;
+            gap: 8px;
+            margin: 0 auto;
+            margin-bottom: 32px;
+          `}
+        >
+          <Button
+            color={mode === "you" ? "primary" : "default"}
+            rounded
+            onClick={() => setMode("you")}
+          >
+            OWNER
+          </Button>
+          <Button
+            color={mode === "yourTeam" ? "primary" : "default"}
+            rounded
+            onClick={() => setMode("yourTeam")}
+          >
+            INVOLVED
+          </Button>
+        </div>
+      )}
       <div
         css={css`
           display: grid;
