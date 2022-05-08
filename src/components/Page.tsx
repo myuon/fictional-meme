@@ -5,7 +5,13 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import { Link, useNavigate } from "react-router-dom";
 import { LinkButton } from "./Button";
 
-export const Page = ({ children }: { children: React.ReactNode }) => {
+export const Page = ({
+  children,
+  headerRight,
+}: {
+  children: React.ReactNode;
+  headerRight?: React.ReactNode;
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -54,7 +60,9 @@ export const Page = ({ children }: { children: React.ReactNode }) => {
             Gimlet
           </h1>
         </Link>
-        <LinkButton onClick={() => navigate(-1)}>Back</LinkButton>
+        {headerRight ?? (
+          <LinkButton onClick={() => navigate(-1)}>Back</LinkButton>
+        )}
       </header>
 
       <main>{children}</main>
