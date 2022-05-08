@@ -161,6 +161,14 @@ export const ComponentsPage = () => {
           >
             Add Toast with Looooooong text
           </Button>
+
+          <Button
+            onClick={() => {
+              addToast(`Hi! Timeout: 3s`, { timeout: 3000 });
+            }}
+          >
+            Add Toast with timeout
+          </Button>
         </div>
       </section>
     </main>

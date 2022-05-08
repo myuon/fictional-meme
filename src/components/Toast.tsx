@@ -1,5 +1,11 @@
 import { css } from "@emotion/react";
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { theme } from "./theme";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -98,22 +104,37 @@ export const useToasts = () => {
 
 export const Toast = ({ id, message }: { id: string; message: string }) => {
   const { removeToast } = useToasts();
+  // for animation
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    setShow(true);
+  }, []);
 
   return (
     <div
-      css={css`
-        z-index: 3;
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 16px;
-        align-items: center;
-        max-width: 350px;
-        padding: 12px 16px;
-        color: white;
-        background-color: ${theme.palette.primary.main};
-        border-radius: 4px;
-        box-shadow: ${theme.primaryShadow[5]};
-      `}
+      data-show={show}
+      css={[
+        css`
+          z-index: 3;
+          display: grid;
+          grid-template-columns: 1fr auto;
+          gap: 16px;
+          align-items: center;
+          max-width: 350px;
+          padding: 12px 16px;
+          color: white;
+          background-color: ${theme.palette.primary.main};
+          border-radius: 4px;
+          box-shadow: ${theme.primaryShadow[5]};
+        `,
+        css`
+          transition: all 0.12s ease-in-out;
+
+          &[data-show="false"] {
+            transform: translateX(100%);
+          }
+        `,
+      ]}
     >
       <div>
         <p
