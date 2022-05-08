@@ -91,9 +91,8 @@ const FileViewer = ({
   packageJsonDependency?: PackageJsonDependency;
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [open, setOpen] = useState(false);
 
-  const { ref: popperRef, props: popperProps } = usePopper();
+  const { ref: popperRef, openPopper, ...props } = usePopper();
 
   const [selectedItem, setSelectedItem] = useState<PackageItem | undefined>(
     undefined
@@ -124,7 +123,7 @@ const FileViewer = ({
                 onClick={(event) => {
                   popperRef(event.currentTarget);
                   setSelectedItem(item);
-                  setOpen(true);
+                  openPopper();
                 }}
               >
                 {children}
@@ -147,11 +146,7 @@ const FileViewer = ({
       </SyntaxHighlighter>
 
       {packageJsonDependency && (
-        <PackageTooltip
-          item={selectedItem}
-          open={open}
-          floatingProps={popperProps}
-        />
+        <PackageTooltip item={selectedItem} {...props} />
       )}
     </div>
   ) : null;
