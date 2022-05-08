@@ -36,6 +36,13 @@ const npmUpgradeLatest = async (
     type: "start",
   });
 
+  const defaultBranchName = command(
+    ["git rev-parse --abbrev-ref origin/HEAD | cut -d '/' -f 2"],
+    repoDir
+  )
+    .stdout.toString()
+    .trim();
+
   // clone a repository OR switch to default branch
   if (fs.existsSync(repoDir)) {
     sendEvent({
@@ -45,14 +52,8 @@ const npmUpgradeLatest = async (
     });
 
     // This only works for a repository cloned from origin
-    const branch = command(
-      ["git rev-parse --abbrev-ref origin/HEAD | cut -d '/' -f 2"],
-      repoDir
-    )
-      .stdout.toString()
-      .trim();
     command(["git", "checkout", branch], repoDir);
-    console.log(`[npm:upgradeLatest] switched to branch ${branch}`);
+    console.log(`[npm:upgradeLatest] switched to branch ${defaultBranchName}`);
     command(["git", "fetch"], repoDir);
     console.log(`[npm:upgradeLatest] git fetch executed`);
   } else {
@@ -151,6 +152,7 @@ const npmUpgradeLatest = async (
     progress: progressCounter++ / progressSum,
     type: "done",
     branchName,
+    defaultBranchName,
   });
 };
 
