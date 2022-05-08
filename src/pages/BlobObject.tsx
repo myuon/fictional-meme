@@ -17,69 +17,13 @@ import ListIcon from "@mui/icons-material/List";
 import { Popper, PopperProps, usePopper } from "../components/Popper";
 import { useEffectOnce } from "../components/useEffectOnce";
 import { detectLanguageFromFileName } from "../helper/detectLanguage";
-
-const findPackageVersionNode = (element: HTMLElement, item: PackageItem) => {
-  const getElementByLine = (element: HTMLElement, nth: number) => {
-    let counter = 1;
-
-    for (let i = 0; i < element.childNodes.length; i++) {
-      const current = element.childNodes.item(i);
-      if (counter == nth) {
-        return current;
-      }
-
-      if (current.textContent?.includes("\n")) {
-        counter++;
-      }
-    }
-  };
-  const getElementByColumn = (element: Node, column: number) => {
-    let counter = 0;
-    let current = element;
-
-    while (counter < column) {
-      const length = current?.textContent?.length;
-      if (length) {
-        counter += length;
-      }
-
-      if (current.nextSibling) {
-        current = current.nextSibling;
-      } else {
-        return undefined;
-      }
-    }
-
-    if (counter === column) {
-      return current.nextSibling;
-    }
-  };
-  const findLocNode = (element: HTMLElement, line: number, column: number) => {
-    const lineElement = getElementByLine(element, line);
-    if (lineElement) {
-      return getElementByColumn(lineElement, column);
-    }
-
-    return undefined;
-  };
-
-  if (element) {
-    const node = findLocNode(
-      element,
-      item.version.loc.line,
-      item.version.loc.column
-    );
-    if (node) {
-      return node as HTMLElement;
-    }
-  }
-};
+import { findLocNode } from "./BlobObject/findLocNode";
 
 const PackageTooltip = ({
   item,
   ...props
 }: {
-  item: PackageItem;
+  item?: PackageItem;
 } & Omit<PopperProps, "children">) => {
   return (
     <Popper {...props}>
@@ -96,7 +40,7 @@ const PackageTooltip = ({
               font-weight: bold;
             `}
           >
-            {item.name.value}
+            {item?.name.value}
           </span>
           <span
             css={css`
@@ -122,6 +66,21 @@ const PackageTooltip = ({
   );
 };
 
+const renderWrapperComponent = (
+  targetNode: HTMLElement | undefined,
+  Component: ({ children }: { children: React.ReactNode }) => JSX.Element
+) => {
+  if (!targetNode) return;
+
+  const reactRoot = ReactDOM.createRoot(targetNode);
+  const children = React.createElement("span", {
+    dangerouslySetInnerHTML: { __html: targetNode.innerHTML },
+    className: targetNode.getAttribute("class"),
+  });
+
+  reactRoot.render(<Component>{children}</Component>);
+};
+
 const FileViewer = ({
   fileName,
   text,
@@ -136,9 +95,11 @@ const FileViewer = ({
 
   const { ref: popperRef, props: popperProps } = usePopper();
 
-  useEffectOnce(() => {
-    console.log(packageJsonDependency);
+  const [selectedItem, setSelectedItem] = useState<PackageItem | undefined>(
+    undefined
+  );
 
+  useEffectOnce(() => {
     // Find dependencies for package.json and transform the dom
     if (packageJsonDependency && ref.current) {
       const element = ref.current
@@ -146,29 +107,31 @@ const FileViewer = ({
         .item(0)
         ?.getElementsByTagName("code")
         .item(0);
-      const item = packageJsonDependency?.devDependencies?.[0];
-      if (element && item) {
-        const targetNode = findPackageVersionNode(element, item);
-        if (targetNode) {
-          const reactRoot = ReactDOM.createRoot(targetNode);
-          const children = React.createElement("span", {
-            dangerouslySetInnerHTML: { __html: targetNode.innerHTML },
-            className: targetNode.getAttribute("class"),
-          });
 
-          reactRoot.render(
-            <button
-              css={css`
-                color: inherit;
-                text-decoration: underline;
-              `}
-              ref={popperRef}
-              onClick={() => setOpen(true)}
-            >
-              {children}
-            </button>
-          );
-        }
+      if (element) {
+        [
+          ...packageJsonDependency.dependencies,
+          ...packageJsonDependency.devDependencies,
+        ].forEach((item) => {
+          const targetNode = findLocNode(element, item.version.loc);
+          renderWrapperComponent(targetNode, ({ children }) => {
+            return (
+              <button
+                css={css`
+                  color: inherit;
+                  text-decoration: underline;
+                `}
+                onClick={(event) => {
+                  popperRef(event.currentTarget);
+                  setSelectedItem(item);
+                  setOpen(true);
+                }}
+              >
+                {children}
+              </button>
+            );
+          });
+        });
       }
     }
   });
@@ -185,7 +148,7 @@ const FileViewer = ({
 
       {packageJsonDependency && (
         <PackageTooltip
-          item={packageJsonDependency.devDependencies[0]}
+          item={selectedItem}
           open={open}
           floatingProps={popperProps}
         />
