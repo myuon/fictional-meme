@@ -4,20 +4,24 @@ import { theme } from "./theme";
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "./Button";
 import { useClickOutside } from "./useClickOutside";
+import ReactDOM from "react-dom";
 
-export const useModal = (options?: { closeOnClickOutside?: boolean }) => {
+export const useModal = (options?: {
+  closeOnClickOutside?: boolean;
+  disableOnClose?: boolean;
+}) => {
   const [open, setOpen] = useState(false);
 
   return useMemo(
     () => ({
       open,
       openModal: () => setOpen(true),
-      onClose: () => setOpen(false),
+      onClose: options?.disableOnClose ? undefined : () => setOpen(false),
       onClickOutside: options?.closeOnClickOutside
         ? () => setOpen(false)
         : undefined,
     }),
-    [open, options?.closeOnClickOutside]
+    [open, options?.closeOnClickOutside, options?.disableOnClose]
   );
 };
 
@@ -35,8 +39,13 @@ export const Modal = ({
   children,
 }: ModalProps) => {
   const ref = useClickOutside<HTMLDivElement>(onClickOutside);
+  const portal = document.getElementById("portal");
 
-  return (
+  if (!portal) {
+    return null;
+  }
+
+  return ReactDOM.createPortal(
     <div
       css={[
         theme.glass,
@@ -85,14 +94,18 @@ export const Modal = ({
           </div>
         )}
         <div
-          css={css`
-            margin: 16px 24px;
-            margin-top: 0;
-          `}
+          css={
+            onClose !== undefined &&
+            css`
+              margin: 16px 24px;
+              margin-top: 0;
+            `
+          }
         >
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    portal
   );
 };

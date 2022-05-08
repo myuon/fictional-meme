@@ -21,3 +21,18 @@ query getRepository($owner: String!, $name: String!) {
     }
   }
 }
+
+query searchRepository($q: String!) {
+  search(query: $q, type: REPOSITORY, first: 5) {
+    nodes {
+      __typename
+      ... on Repository {
+        id
+        name
+        owner {
+          login
+        }
+      }
+    }
+  }
+}

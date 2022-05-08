@@ -4,10 +4,11 @@ import { useAuthUser } from "../api/user";
 import { Loading } from "../components/Loading";
 import { useInvolvedIssues } from "../api/issues";
 import { IssueItem } from "./Index/IssueItem";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DeveloperModeIcon from "@mui/icons-material/DeveloperMode";
 import { Page } from "../components/Page";
-import { Button } from "../components/Button";
+import { Button, IconButton } from "../components/Button";
+import { SearchBox } from "./Index/SearchBox";
 
 const fromStatusState = (
   state: "EXPECTED" | "ERROR" | "FAILURE" | "PENDING" | "SUCCESS" | undefined
@@ -31,19 +32,27 @@ export const IndexPage = () => {
     5 * 60
   );
 
+  const navigate = useNavigate();
+
   return (
     <Page
       headerRight={
         <div
           css={css`
             display: flex;
-            gap: 8px;
+            gap: 4px;
+            align-items: center;
           `}
         >
           <p>Hi, {user?.viewer.name}!</p>
-          <Link to="/components">
+          <SearchBox />
+          <IconButton
+            onClick={() => {
+              navigate("/components");
+            }}
+          >
             <DeveloperModeIcon />
-          </Link>
+          </IconButton>
         </div>
       }
     >

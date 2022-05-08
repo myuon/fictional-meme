@@ -24,5 +24,6 @@ module.exports = {
     "css-reorder/property-reorder": "error",
     "react/self-closing-comp": "error",
     "react/prop-types": "off",
+    "react/display-name": "off",
   },
 };

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { AnchorButton, Button } from "../components/Button";
 import { Modal, useModal } from "../components/Modal";
 import { Progress } from "../components/Progress";
+import { TextField } from "../components/TextField";
 import { theme } from "../components/theme";
 import { Toast, useToasts } from "../components/Toast";
 import { sleep } from "../helper/sleep";
@@ -287,6 +288,20 @@ export const ComponentsPage = () => {
               <p>Here is a information for you. Are you sure?</p>
             </div>
           </Modal>
+        </div>
+      </section>
+
+      <section>
+        <header>
+          <h3>TextField</h3>
+        </header>
+
+        <div
+          css={css`
+            width: 400px;
+          `}
+        >
+          <TextField placeholder="you@example.com" />
         </div>
       </section>
     </main>
