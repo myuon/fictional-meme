@@ -1,10 +1,14 @@
 import { css } from "@emotion/react";
+import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/Button";
 import { theme } from "../components/theme";
+import { Toast, useToasts } from "../components/Toast";
 
 export const ComponentsPage = () => {
+  const { addToast } = useToasts();
+
   return (
     <main
       css={css`
@@ -120,6 +124,43 @@ export const ComponentsPage = () => {
               {key}
             </div>
           ))}
+        </div>
+      </section>
+
+      <section>
+        <header>
+          <h3>Toast</h3>
+        </header>
+
+        <Toast id="" message="こんにちは これはトーストです。" />
+        <Toast
+          id=""
+          message="「今は昔、竹取の翁（おきな）といふものありけり。 野山にまじりて竹を取りつつ、よろづのことに使ひけり。 名をば、さぬきの造（みやつこ）となむいひける。 その竹の中に、もと光る竹なむ一筋（ひとすぢ）ありける。"
+        />
+
+        <div
+          className="row"
+          css={css`
+            margin-top: 16px;
+          `}
+        >
+          <Button
+            onClick={() => {
+              addToast(`Hi! ${dayjs().format("HH:mm:ss")}`);
+            }}
+          >
+            Add Toast
+          </Button>
+
+          <Button
+            onClick={() => {
+              addToast(
+                "「今は昔、竹取の翁（おきな）といふものありけり。 野山にまじりて竹を取りつつ、よろづのことに使ひけり。 名をば、さぬきの造（みやつこ）となむいひける。 その竹の中に、もと光る竹なむ一筋（ひとすぢ）ありける。"
+              );
+            }}
+          >
+            Add Toast with Looooooong text
+          </Button>
         </div>
       </section>
     </main>
