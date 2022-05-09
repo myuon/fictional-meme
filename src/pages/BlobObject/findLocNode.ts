@@ -30,9 +30,8 @@ const getElementByColumn = (element: Node, column: number) => {
     }
   }
 
-  if (counter === column) {
-    return current.nextSibling;
-  }
+  // It should be column === counter, but sometimes this is not the case. Why?
+  return current.nextSibling;
 };
 
 export const findLocNode = (
