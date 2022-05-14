@@ -1,6 +1,20 @@
-export const notify = (message: string) => {
+export const notify = (
+  message: string,
+  options?: NotificationOptions & {
+    url?: string;
+  }
+) => {
   const createNotification = () => {
-    return new Notification(message);
+    const { url, ...notificationOptions } = options ?? {};
+
+    const notification = new Notification(message, notificationOptions);
+    if (url) {
+      notification.onclick = () => {
+        window.open(url, "_blank");
+      };
+    }
+
+    return notification;
   };
 
   if (!("Notification" in window)) {

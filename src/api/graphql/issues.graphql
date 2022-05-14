@@ -1,50 +1,60 @@
+fragment SearchIssuesResultPullRequest on PullRequest {
+  id
+  title
+  closed
+  isDraft
+  url
+  updatedAt
+  headRef {
+    target {
+      ... on Commit {
+        __typename
+        statusCheckRollup {
+          state
+        }
+        pushedDate
+      }
+      abbreviatedOid
+    }
+  }
+  mergeCommit {
+    abbreviatedOid
+    statusCheckRollup {
+      state
+    }
+    pushedDate
+  }
+  repository {
+    name
+    owner {
+      login
+    }
+  }
+}
+
+fragment SearchIssuesResultIssue on Issue {
+  id
+  title
+  closed
+  url
+  updatedAt
+  repository {
+    name
+    owner {
+      login
+    }
+  }
+}
+
 query searchIssues($last: Int!, $type: SearchType!, $q: String!) {
   search(last: $last, type: $type, query: $q) {
     nodes {
       __typename
       ... on PullRequest {
-        id
-        title
-        closed
-        isDraft
-        url
-        updatedAt
-        headRef {
-          target {
-            ... on Commit {
-              __typename
-              status {
-                state
-              }
-            }
-            abbreviatedOid
-          }
-        }
-        mergeCommit {
-          abbreviatedOid
-          statusCheckRollup {
-            state
-          }
-        }
-        repository {
-          name
-          owner {
-            login
-          }
-        }
+        ...SearchIssuesResultPullRequest
       }
       ... on Issue {
-        id
-        title
-        closed
-        url
-        updatedAt
-        repository {
-          name
-          owner {
-            login
-          }
-        }
+        ...SearchIssuesResultIssue
       }
     }
   }

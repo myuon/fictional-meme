@@ -11,8 +11,10 @@ import { ComponentsPage } from "./pages/Components";
 import { RepositoryPage } from "./pages/Repository";
 import { BlobObjectPage } from "./pages/BlobObject";
 import { ToastProvider } from "./components/Toast";
+import utc from "dayjs/plugin/utc";
 
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
 
 const Pages = () => {
   return (
