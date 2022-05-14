@@ -130,7 +130,15 @@ export const IndexPage = () => {
               key={issue.id}
               {...issue}
               variant="pr"
-              state={issue.closed ? "closed" : issue.isDraft ? "draft" : "open"}
+              state={
+                issue.closed
+                  ? issue.merged
+                    ? "closed"
+                    : "closedNoMerge"
+                  : issue.isDraft
+                  ? "draft"
+                  : "open"
+              }
               repository={{
                 owner: issue.repository.owner.login,
                 name: issue.repository.name,

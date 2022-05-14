@@ -2,6 +2,7 @@ fragment SearchIssuesResultPullRequest on PullRequest {
   id
   title
   closed
+  merged
   isDraft
   url
   updatedAt

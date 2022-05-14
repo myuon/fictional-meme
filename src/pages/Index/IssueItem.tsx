@@ -14,6 +14,9 @@ const iconStyle = css`
   &[data-status="closed"] {
     color: ${theme.palette.semantical.closed.main};
   }
+  &[data-status="closedNoMerge"] {
+    color: ${theme.palette.semantical.error.main};
+  }
   &[data-status="open"] {
     color: ${theme.palette.semantical.open.main};
   }
@@ -47,7 +50,7 @@ export const IssueItem = ({
   commit,
 }: {
   variant: "issue" | "pr";
-  state: "closed" | "open" | "draft";
+  state: "closed" | "closedNoMerge" | "open" | "draft";
   url: string;
   title: string;
   repository: {
