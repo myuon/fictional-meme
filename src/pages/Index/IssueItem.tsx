@@ -8,6 +8,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import PendingIcon from "@mui/icons-material/Pending";
 import { Link } from "react-router-dom";
+import { AnchorButton } from "../../components/Button";
 
 const iconStyle = css`
   &[data-status="closed"] {
@@ -57,6 +58,7 @@ export const IssueItem = ({
   commit?: {
     oid?: string;
     checkStatus?: "success" | "error" | "pending";
+    url?: string;
   };
 }) => {
   return (
@@ -102,14 +104,22 @@ export const IssueItem = ({
         <span key="updatedAt">{dayjs(updatedAt).fromNow()}</span>
         {commit ? (
           <span key="latestCommit">
-            {commit?.oid}
-            {commit.checkStatus === "success" ? (
-              <CheckIcon data-status="success" css={checkStatusStyle} />
-            ) : commit.checkStatus === "error" ? (
-              <ClearIcon data-status="error" css={checkStatusStyle} />
-            ) : commit.checkStatus === "pending" ? (
-              <PendingIcon data-status="pending" css={checkStatusStyle} />
-            ) : null}
+            <AnchorButton
+              href={commit.url}
+              blank
+              css={css`
+                font-size: inherit;
+              `}
+            >
+              {commit?.oid}
+              {commit.checkStatus === "success" ? (
+                <CheckIcon data-status="success" css={checkStatusStyle} />
+              ) : commit.checkStatus === "error" ? (
+                <ClearIcon data-status="error" css={checkStatusStyle} />
+              ) : commit.checkStatus === "pending" ? (
+                <PendingIcon data-status="pending" css={checkStatusStyle} />
+              ) : null}
+            </AnchorButton>
           </span>
         ) : undefined}
       </small>

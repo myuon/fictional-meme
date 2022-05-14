@@ -57,6 +57,7 @@ export const getPrLatestCommit = (
       oid: issue.mergeCommit.abbreviatedOid,
       checkStatus: fromStatusState(issue.mergeCommit.statusCheckRollup?.state),
       pushedDate: issue.mergeCommit.pushedDate,
+      url: issue.mergeCommit.url,
     };
   } else if (issue.headRef?.target) {
     const target = issue.headRef.target;
@@ -66,6 +67,7 @@ export const getPrLatestCommit = (
         oid: target.abbreviatedOid,
         checkStatus: fromStatusState(state),
         pushedDate: target.pushedDate,
+        url: target.url,
       };
     }
   }
